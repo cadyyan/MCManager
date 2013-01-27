@@ -3,7 +3,11 @@ package com.theisleoffavalon.mcmanager.network;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
+import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
+import com.theisleoffavalon.mcmanager.network.handler.HtmlWebRequestHandler;
+import com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler;
+import com.theisleoffavalon.mcmanager.network.handler.impl.RootWebHandler;
 
 /**
  * Handles network connections over HTTP. This properly dispatches web requests to
@@ -25,8 +29,14 @@ public class WebServer
 	private HttpServer webServer;
 	
 	/**
+	 * The handler for the root context.
+	 */
+	private HtmlWebRequestHandler rootHandler;
+	
+	/**
 	 * Creates an instance of the web server but does not actually start
 	 * it. To start it you must call the {@link start} method.
+	 * 
 	 * @throws IOException thrown when the web socket could not be created and bound
 	 */
 	public WebServer() throws IOException
@@ -38,6 +48,9 @@ public class WebServer
 		
 		// TODO: set the executor to be of fixed size which is determined by a configuration setting
 		webServer.setExecutor(null);
+		
+		rootHandler = new RootWebHandler();
+		addHandler("/", rootHandler);
 	}
 	
 	/**
@@ -54,5 +67,16 @@ public class WebServer
 	public void stop()
 	{
 		webServer.stop(STOP_WAIT_TIME);
+	}
+	
+	/**
+	 * Adds a web request handler for a given web context.
+	 * 
+	 * @param context - the web context this handler listens on
+	 * @param handler - the request handler
+	 */
+	public void addHandler(String context, IWebRequestHandler handler)
+	{
+		webServer.createContext(context, handler);
 	}
 }

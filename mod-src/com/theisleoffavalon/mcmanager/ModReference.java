@@ -26,12 +26,12 @@ public class ModReference
 	/**
 	 * The client side proxy.
 	 */
-	public static final String CLIENT_PROXY = "com.theisleoffavalon.proxy.MCManagerClientProxy";
+	public static final String CLIENT_PROXY = "com.theisleoffavalon.mcmanager.proxy.MCManagerClientProxy";
 	
 	/**
 	 * The server side proxy.
 	 */
-	public static final String SERVER_PROXY = "com.theisleoffavalon.proxy.MCManagerServerProxy";
+	public static final String SERVER_PROXY = "com.theisleoffavalon.mcmanager.proxy.MCManagerServerProxy";
 	
 	/**
 	 * Hidden constructor.
