@@ -18,23 +18,14 @@ public class RootWebHandler extends HtmlWebRequestHandler
 {
 	/*
 	 * (non-Javadoc)
-	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#get(com.sun.net.httpserver.HttpExchange)
+	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#get(com.sun.net.httpserver.HttpExchange, java.io.PrintStream)
 	 */
 	@Override
-	public void get(HttpExchange exchange)
+	public StatusCode get(HttpExchange exchange, PrintStream out)
 	{
-		try
-		{
-			exchange.sendResponseHeaders(200, 0);
-		}
-		catch(IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		PrintStream out = new PrintStream(exchange.getResponseBody());
 		out.println("<html><head><title>It Works!</title></head><body><h1>It Works!</h1></body></html>");
+		
+		return StatusCode.OK;
 	}
 
 	/*
@@ -42,9 +33,8 @@ public class RootWebHandler extends HtmlWebRequestHandler
 	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#post(com.sun.net.httpserver.HttpExchange)
 	 */
 	@Override
-	public void post(HttpExchange exchange)
+	public StatusCode post(HttpExchange exchange, PrintStream out)
 	{
-		// TODO Auto-generated method stub
-
+		return null;
 	}
 }

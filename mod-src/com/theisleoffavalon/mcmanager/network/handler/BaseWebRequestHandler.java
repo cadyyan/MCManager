@@ -1,6 +1,11 @@
 package com.theisleoffavalon.mcmanager.network.handler;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.nio.charset.CharsetDecoder;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -27,38 +32,43 @@ public abstract class BaseWebRequestHandler implements IWebRequestHandler
 	{
 		try
 		{
-			String method = exchange.getRequestMethod();
+			String methodName = exchange.getRequestMethod().toLowerCase();
+			ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+			PrintStream wrappedStream = new PrintStream(buffer);
 			
 			try
 			{
-				if(method.equals("GET"))
-					get(exchange);
-				else if(method.equals("HEAD"))
-					head(exchange);
-				else if(method.equals("POST"))
-					post(exchange);
-				else if(method.equals("PUT"))
-					put(exchange);
-				else if(method.equals("DELETE"))
-					delete(exchange);
-				else if(method.equals("TRACE"))
-					trace(exchange);
-				else if(method.equals("CONNECT"))
-					connect(exchange);
-				else
-				{
-					LogHelper.warning("Received unknown method request on web server: " + method);
-					exchange.sendResponseHeaders(IWebRequestHandler.StatusCode.NOT_IMPLMENTED.getHttpCode(), 0);
-				}
+				Class<? extends IWebRequestHandler> type = getClass();
+				Method method = type.getMethod(methodName, HttpExchange.class, PrintStream.class);
+				
+				StatusCode code = (StatusCode)method.invoke(this, exchange, wrappedStream);
+				
+				byte byteBuffer[] = buffer.toByteArray();
+				int length = byteBuffer.length;
+				
+				exchange.sendResponseHeaders(code.getHttpCode(), length);
+				exchange.getResponseBody().write(byteBuffer);
 			}
 			catch(NotImplementedException e)
 			{
-				exchange.sendResponseHeaders(IWebRequestHandler.StatusCode.METHOD_NOT_ALLOWED.getHttpCode(), 0);
+				LogHelper.warning("Received a request of type " + methodName + " but the handler was has not implemented this method.");
+				exchange.sendResponseHeaders(StatusCode.METHOD_NOT_ALLOWED.getHttpCode(), 0);
+			}
+			catch(NoSuchMethodException e)
+			{
+				LogHelper.warning("Received unknown method request on web server: " + methodName);
+				exchange.sendResponseHeaders(StatusCode.NOT_IMPLMENTED.getHttpCode(), 0);
+			}
+			catch(IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
+			{
+				LogHelper.error("There was a problem calling the requested method on the web handler!");
+				exchange.sendResponseHeaders(StatusCode.INTERNAL_SERVER_ERROR.getHttpCode(), 0);
 			}
 		}
 		catch(IOException e)
 		{
-			LogHelper.error("There was a severe error when trying to communicate with a web client.");
+			LogHelper.error("There was a severe error when trying to communicate with a web client.\n" +
+							e.getMessage());
 		}
 		finally
 		{
@@ -68,53 +78,50 @@ public abstract class BaseWebRequestHandler implements IWebRequestHandler
 	
 	/*
 	 * (non-Javadoc)
-	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#head(com.sun.net.httpserver.HttpExchange)
+	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#head(com.sun.net.httpserver.HttpExchange, java.io.PrintStream)
 	 */
 	@Override
-	public void head(HttpExchange exchange)
+	public StatusCode head(HttpExchange exchange, PrintStream out)
 	{
 		throw new NotImplementedException();
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#put(com.sun.net.httpserver.HttpExchange)
+	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#put(com.sun.net.httpserver.HttpExchange, java.io.PrintStream)
 	 */
 	@Override
-	public void put(HttpExchange exchange)
+	public StatusCode put(HttpExchange exchange, PrintStream out)
 	{
 		throw new NotImplementedException();
 	}
 	
-	/**
-	 * Handles HTTP-DELETE requests. This is optional
-	 * to implement.
-	 * 
-	 * @param exchange - the exchange between client and server
+	/*
+	 * (non-Javadoc)
+	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#delete(com.sun.net.httpserver.HttpExchange, java.io.PrintStream)
 	 */
-	public void delete(HttpExchange exchange)
+	@Override
+	public StatusCode delete(HttpExchange exchange, PrintStream out)
 	{
 		throw new NotImplementedException();
 	}
 	
-	/**
-	 * Handles the HTTP-TRACE requests. This is optional
-	 * to implement.
-	 * 
-	 * @param exchange - the exchange between client and server
+	/*
+	 * (non-Javadoc)
+	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#trace(com.sun.net.httpserver.HttpExchange, java.io.PrintStream)
 	 */
-	public void trace(HttpExchange exchange)
+	@Override
+	public StatusCode trace(HttpExchange exchange, PrintStream out)
 	{
 		throw new NotImplementedException();
 	}
 	
-	/**
-	 * Handles the HTTP-CONNECT requests. This is optional
-	 * to implement.
-	 * 
-	 * @param exchange - the exchange between client and server
+	/*
+	 * (non-Javadoc)
+	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#connect(com.sun.net.httpserver.HttpExchange, java.io.PrintStream)
 	 */
-	public void connect(HttpExchange exchange)
+	@Override
+	public StatusCode connect(HttpExchange exchange, PrintStream out)
 	{
 		throw new NotImplementedException();
 	}

@@ -1,5 +1,7 @@
 package com.theisleoffavalon.mcmanager.network.handler;
 
+import java.io.PrintStream;
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -7,6 +9,9 @@ import com.sun.net.httpserver.HttpHandler;
  * A specialized implementation of the {@link HttpHandler}
  * interface. This interface allows us to format the incoming
  * request as needed to send and receive into the expected format.
+ * Handlers should not write directly to the output stream. They
+ * should instead write to the stream that is provided to each
+ * handler method.
  * 
  * @author Cadyyan
  *
@@ -134,53 +139,67 @@ public interface IWebRequestHandler extends HttpHandler
 	 * Handles HTTP-GET requests.
 	 * 
 	 * @param exchange - the exchange between client and server
+	 * @param out - the stream to write out to
+	 * @return the status code result
 	 */
-	public void get(HttpExchange exchange);
+	public StatusCode get(HttpExchange exchange, PrintStream out);
 	
 	/**
 	 * Handles HTTP-HEAD requests. This is optional
 	 * to implement.
 	 * 
 	 * @param exchange - the exchange between client and server
+	 * @param out - the stream to write out to
+	 * @return the status code result
 	 */
-	public void head(HttpExchange exchange);
+	public StatusCode head(HttpExchange exchange, PrintStream out);
 	
 	/**
 	 * Handles HTTP-POST requests.
 	 * 
 	 * @param exchange - the exchange between client and server
+	 * @param out - the stream to write out to
+	 * @return the status code result
 	 */
-	public void post(HttpExchange exchange);
+	public StatusCode post(HttpExchange exchange, PrintStream out);
 	
 	/**
 	 * Handles HTTP-PUT requests. This is optional
 	 * to implement.
 	 * 
 	 * @param exchange - the exchange between client and server
+	 * @param out - the stream to write out to
+	 * @return the status code result
 	 */
-	public void put(HttpExchange exchange);
+	public StatusCode put(HttpExchange exchange, PrintStream out);
 	
 	/**
 	 * Handles HTTP-DELETE requests. This is optional
 	 * to implement.
 	 * 
 	 * @param exchange - the exchange between client and server
+	 * @param out - the stream to write out to
+	 * @return the status code result
 	 */
-	public void delete(HttpExchange exchange);
+	public StatusCode delete(HttpExchange exchange, PrintStream out);
 	
 	/**
 	 * Handles the HTTP-TRACE requests. This is optional
 	 * to implement.
 	 * 
 	 * @param exchange - the exchange between client and server
+	 * @param out - the stream to write out to
+	 * @return the status code result
 	 */
-	public void trace(HttpExchange exchange);
+	public StatusCode trace(HttpExchange exchange, PrintStream out);
 	
 	/**
 	 * Handles the HTTP-CONNECT requests. This is optional
 	 * to implement.
 	 * 
 	 * @param exchange - the exchange between client and server
+	 * @param out - the stream to write out to
+	 * @return the status code result
 	 */
-	public void connect(HttpExchange exchange);
+	public StatusCode connect(HttpExchange exchange, PrintStream out);
 }
