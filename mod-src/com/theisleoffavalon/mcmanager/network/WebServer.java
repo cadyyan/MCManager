@@ -22,7 +22,7 @@ public class WebServer
 	/**
 	 * The number of seconds to wait for requests before stopping the web server.
 	 */
-	private static final long STOP_WAIT_TIME = 2;
+	private static final int STOP_WAIT_TIME = 2;
 	
 	/**
 	 * The HTTP web server.
@@ -45,7 +45,10 @@ public class WebServer
 		// TODO: set this up to use HTTPS instead when requested
 		// TODO: change the port value to be a configuration setting
 		webServer = new Server(1716);
-		webServer.setStopTimeout(STOP_WAIT_TIME);
+		webServer.setGracefulShutdown(STOP_WAIT_TIME);
+		
+		// TODO: change the number of threads to be a configuration setting
+		webServer.setThreadPool(null);
 		
 		rootHandler = new RootWebHandler();
 		addHandler("/", rootHandler);

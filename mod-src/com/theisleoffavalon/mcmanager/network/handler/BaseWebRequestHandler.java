@@ -7,6 +7,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.CharsetDecoder;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.handler.AbstractHandler;
+
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -19,50 +25,48 @@ import com.theisleoffavalon.mcmanager.util.LogHelper;
  * @author Cadyyan
  *
  */
-public abstract class BaseWebRequestHandler implements IWebRequestHandler
+public abstract class BaseWebRequestHandler extends AbstractHandler implements IWebRequestHandler
 {
-	/**
-	 * Handles the incoming HTTP request. This method then pulls out the basic required information
-	 * and then calls the formatting on the request and finally processing the request.
-	 * 
-	 * @param exchange - 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jetty.server.Handler#handle(java.lang.String, org.eclipse.jetty.server.Request, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
-	public void handle(HttpExchange exchange)
+	public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
 	{
 		try
 		{
-			String methodName = exchange.getRequestMethod().toLowerCase();
+			String methodName = request.getMethod().toLowerCase();
 			ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 			PrintStream wrappedStream = new PrintStream(buffer);
 			
 			try
 			{
 				Class<? extends IWebRequestHandler> type = getClass();
-				Method method = type.getMethod(methodName, HttpExchange.class, PrintStream.class);
+				Method method = type.getMethod(methodName, HttpServletRequest.class, HttpServletResponse.class, PrintStream.class);
 				
-				StatusCode code = (StatusCode)method.invoke(this, exchange, wrappedStream);
+				StatusCode code = (StatusCode)method.invoke(this, request, response, wrappedStream);
 				
 				byte byteBuffer[] = buffer.toByteArray();
 				int length = byteBuffer.length;
 				
-				exchange.sendResponseHeaders(code.getHttpCode(), length);
-				exchange.getResponseBody().write(byteBuffer);
+				response.setStatus(code.getHttpCode()); // TODO: Switch to using the built in types rather than the ones I encoded.
+				response.getOutputStream().write(byteBuffer);
 			}
 			catch(NotImplementedException e)
 			{
 				LogHelper.warning("Received a request of type " + methodName + " but the handler was has not implemented this method.");
-				exchange.sendResponseHeaders(StatusCode.METHOD_NOT_ALLOWED.getHttpCode(), 0);
+				response.setStatus(StatusCode.METHOD_NOT_ALLOWED.getHttpCode());
 			}
 			catch(NoSuchMethodException e)
 			{
 				LogHelper.warning("Received unknown method request on web server: " + methodName);
-				exchange.sendResponseHeaders(StatusCode.NOT_IMPLMENTED.getHttpCode(), 0);
+				response.setStatus(StatusCode.NOT_IMPLMENTED.getHttpCode());
 			}
 			catch(IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
 			{
 				LogHelper.error("There was a problem calling the requested method on the web handler!");
-				exchange.sendResponseHeaders(StatusCode.INTERNAL_SERVER_ERROR.getHttpCode(), 0);
+				response.setStatus(StatusCode.INTERNAL_SERVER_ERROR.getHttpCode());
 			}
 		}
 		catch(IOException e)
@@ -72,56 +76,64 @@ public abstract class BaseWebRequestHandler implements IWebRequestHandler
 		}
 		finally
 		{
-			exchange.close();
+			try
+			{
+				response.getOutputStream().close();
+			}
+			catch(IOException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#head(com.sun.net.httpserver.HttpExchange, java.io.PrintStream)
+	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#head(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.PrintStream)
 	 */
 	@Override
-	public StatusCode head(HttpExchange exchange, PrintStream out)
+	public StatusCode head(HttpServletRequest request, HttpServletResponse response, PrintStream out)
 	{
 		throw new NotImplementedException();
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#put(com.sun.net.httpserver.HttpExchange, java.io.PrintStream)
+	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#put(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.PrintStream)
 	 */
 	@Override
-	public StatusCode put(HttpExchange exchange, PrintStream out)
+	public StatusCode put(HttpServletRequest request, HttpServletResponse response, PrintStream out)
 	{
 		throw new NotImplementedException();
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#delete(com.sun.net.httpserver.HttpExchange, java.io.PrintStream)
+	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#delete(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.PrintStream)
 	 */
 	@Override
-	public StatusCode delete(HttpExchange exchange, PrintStream out)
+	public StatusCode delete(HttpServletRequest request, HttpServletResponse response, PrintStream out)
 	{
 		throw new NotImplementedException();
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#trace(com.sun.net.httpserver.HttpExchange, java.io.PrintStream)
+	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#trace(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.PrintStream)
 	 */
 	@Override
-	public StatusCode trace(HttpExchange exchange, PrintStream out)
+	public StatusCode trace(HttpServletRequest request, HttpServletResponse response, PrintStream out)
 	{
 		throw new NotImplementedException();
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#connect(com.sun.net.httpserver.HttpExchange, java.io.PrintStream)
+	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#connect(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.PrintStream)
 	 */
 	@Override
-	public StatusCode connect(HttpExchange exchange, PrintStream out)
+	public StatusCode connect(HttpServletRequest request, HttpServletResponse response, PrintStream out)
 	{
 		throw new NotImplementedException();
 	}

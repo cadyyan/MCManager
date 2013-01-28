@@ -2,7 +2,10 @@ package com.theisleoffavalon.mcmanager.network.handler;
 
 import java.io.PrintStream;
 
-import org.eclipse.jetty.handler.AbstractHandler;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -18,7 +21,7 @@ import com.sun.net.httpserver.HttpHandler;
  * @author Cadyyan
  *
  */
-public interface IWebRequestHandler extends AbstractHandler
+public interface IWebRequestHandler
 {
 	/**
 	 * The HTTP status codes that are likely to be sent. This list
@@ -140,68 +143,75 @@ public interface IWebRequestHandler extends AbstractHandler
 	/**
 	 * Handles HTTP-GET requests.
 	 * 
-	 * @param exchange - the exchange between client and server
+	 * @param request - the request object
+	 * @param response - the response object
 	 * @param out - the stream to write out to
 	 * @return the status code result
 	 */
-	public StatusCode get(HttpExchange exchange, PrintStream out);
+	public StatusCode get(HttpServletRequest request, HttpServletResponse response, PrintStream out);
 	
 	/**
 	 * Handles HTTP-HEAD requests. This is optional
 	 * to implement.
 	 * 
-	 * @param exchange - the exchange between client and server
+	 * @param request - the request object
+	 * @param response - the response object
 	 * @param out - the stream to write out to
 	 * @return the status code result
 	 */
-	public StatusCode head(HttpExchange exchange, PrintStream out);
+	public StatusCode head(HttpServletRequest request, HttpServletResponse response, PrintStream out);
 	
 	/**
 	 * Handles HTTP-POST requests.
 	 * 
-	 * @param exchange - the exchange between client and server
+	 * @param request - the request object
+	 * @param response - the response object
 	 * @param out - the stream to write out to
 	 * @return the status code result
 	 */
-	public StatusCode post(HttpExchange exchange, PrintStream out);
+	public StatusCode post(HttpServletRequest request, HttpServletResponse response, PrintStream out);
 	
 	/**
 	 * Handles HTTP-PUT requests. This is optional
 	 * to implement.
 	 * 
-	 * @param exchange - the exchange between client and server
+	 * @param request - the request object
+	 * @param response - the response object
 	 * @param out - the stream to write out to
 	 * @return the status code result
 	 */
-	public StatusCode put(HttpExchange exchange, PrintStream out);
+	public StatusCode put(HttpServletRequest request, HttpServletResponse response, PrintStream out);
 	
 	/**
 	 * Handles HTTP-DELETE requests. This is optional
 	 * to implement.
 	 * 
-	 * @param exchange - the exchange between client and server
+	 * @param request - the request object
+	 * @param response - the response object
 	 * @param out - the stream to write out to
 	 * @return the status code result
 	 */
-	public StatusCode delete(HttpExchange exchange, PrintStream out);
+	public StatusCode delete(HttpServletRequest request, HttpServletResponse response, PrintStream out);
 	
 	/**
 	 * Handles the HTTP-TRACE requests. This is optional
 	 * to implement.
 	 * 
-	 * @param exchange - the exchange between client and server
+	 * @param request - the request object
+	 * @param response - the response object
 	 * @param out - the stream to write out to
 	 * @return the status code result
 	 */
-	public StatusCode trace(HttpExchange exchange, PrintStream out);
+	public StatusCode trace(HttpServletRequest request, HttpServletResponse response, PrintStream out);
 	
 	/**
 	 * Handles the HTTP-CONNECT requests. This is optional
 	 * to implement.
 	 * 
-	 * @param exchange - the exchange between client and server
+	 * @param request - the request object
+	 * @param response - the response object
 	 * @param out - the stream to write out to
 	 * @return the status code result
 	 */
-	public StatusCode connect(HttpExchange exchange, PrintStream out);
+	public StatusCode connect(HttpServletRequest request, HttpServletResponse response, PrintStream out);
 }
