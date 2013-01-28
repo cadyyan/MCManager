@@ -2,6 +2,8 @@ package com.theisleoffavalon.mcmanager.network.handler;
 
 import java.io.PrintStream;
 
+import org.eclipse.jetty.handler.AbstractHandler;
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -16,7 +18,7 @@ import com.sun.net.httpserver.HttpHandler;
  * @author Cadyyan
  *
  */
-public interface IWebRequestHandler extends HttpHandler
+public interface IWebRequestHandler extends AbstractHandler
 {
 	/**
 	 * The HTTP status codes that are likely to be sent. This list

@@ -5,8 +5,6 @@ import java.net.InetSocketAddress;
 
 import org.eclipse.jetty.server.Server;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpServer;
 import com.theisleoffavalon.mcmanager.network.handler.HtmlWebRequestHandler;
 import com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler;
 import com.theisleoffavalon.mcmanager.network.handler.impl.RootWebHandler;
@@ -29,7 +27,6 @@ public class WebServer
 	/**
 	 * The HTTP web server.
 	 */
-	//private HttpServer webServer;
 	private Server webServer;
 	
 	/**
