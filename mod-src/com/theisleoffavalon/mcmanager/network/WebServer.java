@@ -10,6 +10,7 @@ import com.sun.net.httpserver.HttpServer;
 import com.theisleoffavalon.mcmanager.network.handler.HtmlWebRequestHandler;
 import com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler;
 import com.theisleoffavalon.mcmanager.network.handler.impl.RootWebHandler;
+import com.theisleoffavalon.mcmanager.util.LogHelper;
 
 /**
  * Handles network connections over HTTP. This properly dispatches web requests to
@@ -23,7 +24,7 @@ public class WebServer
 	/**
 	 * The number of seconds to wait for requests before stopping the web server.
 	 */
-	private static final int STOP_WAIT_TIME = 2;
+	private static final long STOP_WAIT_TIME = 2;
 	
 	/**
 	 * The HTTP web server.
@@ -46,12 +47,8 @@ public class WebServer
 	{
 		// TODO: set this up to use HTTPS instead when requested
 		// TODO: change the port value to be a configuration setting
-		// TODO: change the backlog value to be a configuration setting
-		//webServer = HttpServer.create(new InetSocketAddress(1716), 0);
 		webServer = new Server(1716);
-		
-		// TODO: set the executor to be of fixed size which is determined by a configuration setting
-		//webServer.setExecutor(null);
+		webServer.setStopTimeout(STOP_WAIT_TIME);
 		
 		rootHandler = new RootWebHandler();
 		addHandler("/", rootHandler);
@@ -62,7 +59,15 @@ public class WebServer
 	 */
 	public void start()
 	{
-		//webServer.start();
+		try
+		{
+			webServer.start();
+		}
+		catch(Exception e)
+		{
+			LogHelper.error("Unable to start web server.\n" +
+							e.getMessage());
+		}
 	}
 	
 	/**
@@ -70,7 +75,16 @@ public class WebServer
 	 */
 	public void stop()
 	{
-		//webServer.stop(STOP_WAIT_TIME);
+		try
+		{
+			webServer.stop();
+			webServer.join();
+		}
+		catch(Exception e)
+		{
+			LogHelper.error("Unable to start web server.\n" +
+							e.getMessage());
+		}
 	}
 	
 	/**
@@ -81,6 +95,6 @@ public class WebServer
 	 */
 	public void addHandler(String context, IWebRequestHandler handler)
 	{
-		//webServer.createContext(context, handler);
+		// TODO: implement handler adding
 	}
 }
