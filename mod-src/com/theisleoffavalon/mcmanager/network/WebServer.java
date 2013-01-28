@@ -3,6 +3,8 @@ package com.theisleoffavalon.mcmanager.network;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
+import org.eclipse.jetty.server.Server;
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import com.theisleoffavalon.mcmanager.network.handler.HtmlWebRequestHandler;
@@ -26,7 +28,8 @@ public class WebServer
 	/**
 	 * The HTTP web server.
 	 */
-	private HttpServer webServer;
+	//private HttpServer webServer;
+	private Server webServer;
 	
 	/**
 	 * The handler for the root context.
@@ -44,10 +47,11 @@ public class WebServer
 		// TODO: set this up to use HTTPS instead when requested
 		// TODO: change the port value to be a configuration setting
 		// TODO: change the backlog value to be a configuration setting
-		webServer = HttpServer.create(new InetSocketAddress(1716), 0);
+		//webServer = HttpServer.create(new InetSocketAddress(1716), 0);
+		webServer = new Server(1716);
 		
 		// TODO: set the executor to be of fixed size which is determined by a configuration setting
-		webServer.setExecutor(null);
+		//webServer.setExecutor(null);
 		
 		rootHandler = new RootWebHandler();
 		addHandler("/", rootHandler);
@@ -58,7 +62,7 @@ public class WebServer
 	 */
 	public void start()
 	{
-		webServer.start();
+		//webServer.start();
 	}
 	
 	/**
@@ -66,7 +70,7 @@ public class WebServer
 	 */
 	public void stop()
 	{
-		webServer.stop(STOP_WAIT_TIME);
+		//webServer.stop(STOP_WAIT_TIME);
 	}
 	
 	/**
@@ -77,6 +81,6 @@ public class WebServer
 	 */
 	public void addHandler(String context, IWebRequestHandler handler)
 	{
-		webServer.createContext(context, handler);
+		//webServer.createContext(context, handler);
 	}
 }
