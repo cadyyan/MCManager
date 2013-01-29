@@ -84,7 +84,7 @@ public class MCManager
 	public void postInit(FMLPostInitializationEvent event)
 	{
 		if(webServer != null)
-			webServer.start();
+			webServer.startServer();
 		
 		LogHelper.info("Finished initializing!");
 	}
@@ -100,7 +100,7 @@ public class MCManager
 		LogHelper.info("Stopping MCManager...");
 		
 		if(webServer != null)
-			webServer.stop();
+			webServer.stopServer();
 		
 		LogHelper.info("MCManager stopped.");
 	}

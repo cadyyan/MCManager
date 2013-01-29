@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.charset.CharsetDecoder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,7 +14,6 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import com.sun.net.httpserver.HttpExchange;
 import com.theisleoffavalon.mcmanager.util.LogHelper;
 
 /**
@@ -45,28 +43,28 @@ public abstract class BaseWebRequestHandler extends AbstractHandler implements I
 				Class<? extends IWebRequestHandler> type = getClass();
 				Method method = type.getMethod(methodName, HttpServletRequest.class, HttpServletResponse.class, PrintStream.class);
 				
-				StatusCode code = (StatusCode)method.invoke(this, request, response, wrappedStream);
+				int code = (int)method.invoke(this, request, response, wrappedStream);
 				
 				byte byteBuffer[] = buffer.toByteArray();
 				int length = byteBuffer.length;
 				
-				response.setStatus(code.getHttpCode()); // TODO: Switch to using the built in types rather than the ones I encoded.
+				response.setStatus(code);
 				response.getOutputStream().write(byteBuffer);
 			}
 			catch(NotImplementedException e)
 			{
 				LogHelper.warning("Received a request of type " + methodName + " but the handler was has not implemented this method.");
-				response.setStatus(StatusCode.METHOD_NOT_ALLOWED.getHttpCode());
+				response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 			}
 			catch(NoSuchMethodException e)
 			{
 				LogHelper.warning("Received unknown method request on web server: " + methodName);
-				response.setStatus(StatusCode.NOT_IMPLMENTED.getHttpCode());
+				response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
 			}
 			catch(IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
 			{
 				LogHelper.error("There was a problem calling the requested method on the web handler!");
-				response.setStatus(StatusCode.INTERNAL_SERVER_ERROR.getHttpCode());
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			}
 		}
 		catch(IOException e)
@@ -93,7 +91,7 @@ public abstract class BaseWebRequestHandler extends AbstractHandler implements I
 	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#head(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.PrintStream)
 	 */
 	@Override
-	public StatusCode head(HttpServletRequest request, HttpServletResponse response, PrintStream out)
+	public int head(HttpServletRequest request, HttpServletResponse response, PrintStream out)
 	{
 		throw new NotImplementedException();
 	}
@@ -103,7 +101,7 @@ public abstract class BaseWebRequestHandler extends AbstractHandler implements I
 	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#put(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.PrintStream)
 	 */
 	@Override
-	public StatusCode put(HttpServletRequest request, HttpServletResponse response, PrintStream out)
+	public int put(HttpServletRequest request, HttpServletResponse response, PrintStream out)
 	{
 		throw new NotImplementedException();
 	}
@@ -113,7 +111,7 @@ public abstract class BaseWebRequestHandler extends AbstractHandler implements I
 	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#delete(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.PrintStream)
 	 */
 	@Override
-	public StatusCode delete(HttpServletRequest request, HttpServletResponse response, PrintStream out)
+	public int delete(HttpServletRequest request, HttpServletResponse response, PrintStream out)
 	{
 		throw new NotImplementedException();
 	}
@@ -123,7 +121,7 @@ public abstract class BaseWebRequestHandler extends AbstractHandler implements I
 	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#trace(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.PrintStream)
 	 */
 	@Override
-	public StatusCode trace(HttpServletRequest request, HttpServletResponse response, PrintStream out)
+	public int trace(HttpServletRequest request, HttpServletResponse response, PrintStream out)
 	{
 		throw new NotImplementedException();
 	}
@@ -133,7 +131,7 @@ public abstract class BaseWebRequestHandler extends AbstractHandler implements I
 	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#connect(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.PrintStream)
 	 */
 	@Override
-	public StatusCode connect(HttpServletRequest request, HttpServletResponse response, PrintStream out)
+	public int connect(HttpServletRequest request, HttpServletResponse response, PrintStream out)
 	{
 		throw new NotImplementedException();
 	}

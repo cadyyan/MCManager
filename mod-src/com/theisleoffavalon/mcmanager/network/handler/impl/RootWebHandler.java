@@ -1,12 +1,10 @@
 package com.theisleoffavalon.mcmanager.network.handler.impl;
 
-import java.io.IOException;
 import java.io.PrintStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.sun.net.httpserver.HttpExchange;
 import com.theisleoffavalon.mcmanager.network.handler.HtmlWebRequestHandler;
 
 /**
@@ -24,11 +22,11 @@ public class RootWebHandler extends HtmlWebRequestHandler
 	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#get(com.sun.net.httpserver.HttpExchange, java.io.PrintStream)
 	 */
 	@Override
-	public StatusCode get(HttpServletRequest request, HttpServletResponse response, PrintStream out)
+	public int get(HttpServletRequest request, HttpServletResponse response, PrintStream out)
 	{
 		out.println("<html><head><title>It Works!</title></head><body><h1>It Works!</h1></body></html>");
 		
-		return StatusCode.OK;
+		return HttpServletResponse.SC_OK;
 	}
 
 	/*
@@ -36,8 +34,8 @@ public class RootWebHandler extends HtmlWebRequestHandler
 	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#post(com.sun.net.httpserver.HttpExchange)
 	 */
 	@Override
-	public StatusCode post(HttpServletRequest request, HttpServletResponse response, PrintStream out)
+	public int post(HttpServletRequest request, HttpServletResponse response, PrintStream out)
 	{
-		return null;
+		return -1;
 	}
 }

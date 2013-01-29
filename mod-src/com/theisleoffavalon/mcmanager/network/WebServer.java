@@ -1,9 +1,11 @@
 package com.theisleoffavalon.mcmanager.network;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.handler.HandlerCollection;
 
 import com.theisleoffavalon.mcmanager.network.handler.HtmlWebRequestHandler;
 import com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler;
@@ -30,6 +32,11 @@ public class WebServer
 	private Server webServer;
 	
 	/**
+	 * The collection of handlers that are able to handle requests for the web server.
+	 */
+	private HandlerCollection handlers;
+	
+	/**
 	 * The handler for the root context.
 	 */
 	private HtmlWebRequestHandler rootHandler;
@@ -50,6 +57,9 @@ public class WebServer
 		// TODO: change the number of threads to be a configuration setting
 		webServer.setThreadPool(null);
 		
+		handlers = new ContextHandlerCollection();
+		webServer.setHandler(handlers);
+		
 		rootHandler = new RootWebHandler();
 		addHandler("/", rootHandler);
 	}
@@ -57,7 +67,7 @@ public class WebServer
 	/**
 	 * Starts the web server to handle requests.
 	 */
-	public void start()
+	public void startServer()
 	{
 		try
 		{
@@ -73,7 +83,7 @@ public class WebServer
 	/**
 	 * Stops the web server from handling requests.
 	 */
-	public void stop()
+	public void stopServer()
 	{
 		try
 		{
@@ -96,5 +106,10 @@ public class WebServer
 	public void addHandler(String context, IWebRequestHandler handler)
 	{
 		// TODO: implement handler adding
+		ContextHandler wrapper = new ContextHandler();
+		wrapper.setContextPath(context);
+		wrapper.setHandler(handler);
+		
+		handlers.addHandler(wrapper);
 	}
 }
