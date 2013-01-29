@@ -17,10 +17,6 @@ import com.theisleoffavalon.mcmanager.network.handler.HtmlWebRequestHandler;
  */
 public class RootWebHandler extends HtmlWebRequestHandler
 {
-	/*
-	 * (non-Javadoc)
-	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#get(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.StringWriter)
-	 */
 	@Override
 	public int get(HttpServletRequest request, HttpServletResponse response, StringWriter writer)
 	{
@@ -29,10 +25,6 @@ public class RootWebHandler extends HtmlWebRequestHandler
 		return HttpServletResponse.SC_OK;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#post(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.StringWriter)
-	 */
 	@Override
 	public int post(HttpServletRequest request, HttpServletResponse response, StringWriter writer)
 	{

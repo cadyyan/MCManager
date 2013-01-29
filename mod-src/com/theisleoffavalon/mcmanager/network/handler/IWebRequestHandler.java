@@ -15,10 +15,13 @@ import org.eclipse.jetty.server.Handler;
  * should instead write to the stream that is provided to each
  * handler method.
  * 
+ * @param <TypeWrapper> this is the type of wrapper that will go around requests for
+ * formating input and output
+ * 
  * @author Cadyyan
  *
  */
-public interface IWebRequestHandler extends Handler
+public interface IWebRequestHandler<TypeWrapper> extends Handler
 {
 	/**
 	 * Handles HTTP-GET requests.
@@ -28,7 +31,7 @@ public interface IWebRequestHandler extends Handler
 	 * @param writer - the stream to write out to
 	 * @return the status code result
 	 */
-	public int get(HttpServletRequest request, HttpServletResponse response, StringWriter writer);
+	public int get(HttpServletRequest request, HttpServletResponse response, TypeWrapper writer);
 	
 	/**
 	 * Handles HTTP-HEAD requests. This is optional
@@ -39,7 +42,7 @@ public interface IWebRequestHandler extends Handler
 	 * @param writer - the stream to write out to
 	 * @return the status code result
 	 */
-	public int head(HttpServletRequest request, HttpServletResponse response, StringWriter writer);
+	public int head(HttpServletRequest request, HttpServletResponse response, TypeWrapper writer);
 	
 	/**
 	 * Handles HTTP-POST requests.
@@ -49,7 +52,7 @@ public interface IWebRequestHandler extends Handler
 	 * @param writer - the stream to write out to
 	 * @return the status code result
 	 */
-	public int post(HttpServletRequest request, HttpServletResponse response, StringWriter writer);
+	public int post(HttpServletRequest request, HttpServletResponse response, TypeWrapper writer);
 	
 	/**
 	 * Handles HTTP-PUT requests. This is optional
@@ -60,7 +63,7 @@ public interface IWebRequestHandler extends Handler
 	 * @param writer - the stream to write out to
 	 * @return the status code result
 	 */
-	public int put(HttpServletRequest request, HttpServletResponse response, StringWriter writer);
+	public int put(HttpServletRequest request, HttpServletResponse response, TypeWrapper writer);
 	
 	/**
 	 * Handles HTTP-DELETE requests. This is optional
@@ -71,7 +74,7 @@ public interface IWebRequestHandler extends Handler
 	 * @param writer - the stream to write out to
 	 * @return the status code result
 	 */
-	public int delete(HttpServletRequest request, HttpServletResponse response, StringWriter writer);
+	public int delete(HttpServletRequest request, HttpServletResponse response, TypeWrapper writer);
 	
 	/**
 	 * Handles the HTTP-TRACE requests. This is optional
@@ -82,7 +85,7 @@ public interface IWebRequestHandler extends Handler
 	 * @param writer - the stream to write out to
 	 * @return the status code result
 	 */
-	public int trace(HttpServletRequest request, HttpServletResponse response, StringWriter writer);
+	public int trace(HttpServletRequest request, HttpServletResponse response, TypeWrapper writer);
 	
 	/**
 	 * Handles the HTTP-CONNECT requests. This is optional
@@ -93,5 +96,5 @@ public interface IWebRequestHandler extends Handler
 	 * @param writer - the stream to write out to
 	 * @return the status code result
 	 */
-	public int connect(HttpServletRequest request, HttpServletResponse response, StringWriter writer);
+	public int connect(HttpServletRequest request, HttpServletResponse response, TypeWrapper writer);
 }

@@ -22,12 +22,8 @@ import com.theisleoffavalon.mcmanager.util.LogHelper;
  * @author Cadyyan
  *
  */
-public abstract class BaseWebRequestHandler extends AbstractHandler implements IWebRequestHandler
+public abstract class BaseWebRequestHandler<WrapperType> extends AbstractHandler implements IWebRequestHandler<WrapperType>
 {
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jetty.server.Handler#handle(java.lang.String, org.eclipse.jetty.server.Request, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
 	@Override
 	public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
 	{
@@ -35,11 +31,12 @@ public abstract class BaseWebRequestHandler extends AbstractHandler implements I
 		{
 			String methodName = request.getMethod().toLowerCase();
 			StringWriter writer = new StringWriter();
+			WrapperType wrapper = wrapWriter(writer);
 			
 			try
 			{
 				Class<? extends IWebRequestHandler> type = getClass();
-				Method method = type.getMethod(methodName, HttpServletRequest.class, HttpServletResponse.class, StringWriter.class);
+				Method method = type.getMethod(methodName, HttpServletRequest.class, HttpServletResponse.class, wrapper.getClass());
 				
 				int code = (int)method.invoke(this, request, response, writer);
 				
@@ -84,53 +81,43 @@ public abstract class BaseWebRequestHandler extends AbstractHandler implements I
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#head(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.StringWriter)
-	 */
 	@Override
-	public int head(HttpServletRequest request, HttpServletResponse response, StringWriter writer)
+	public int head(HttpServletRequest request, HttpServletResponse response, WrapperType writer)
 	{
 		throw new NotImplementedException();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#put(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.PrintStream)
-	 */
 	@Override
-	public int put(HttpServletRequest request, HttpServletResponse response, StringWriter writer)
+	public int put(HttpServletRequest request, HttpServletResponse response, WrapperType writer)
 	{
 		throw new NotImplementedException();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#delete(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.PrintStream)
-	 */
 	@Override
-	public int delete(HttpServletRequest request, HttpServletResponse response, StringWriter writer)
+	public int delete(HttpServletRequest request, HttpServletResponse response, WrapperType writer)
 	{
 		throw new NotImplementedException();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#trace(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.PrintStream)
-	 */
 	@Override
-	public int trace(HttpServletRequest request, HttpServletResponse response, StringWriter writer)
+	public int trace(HttpServletRequest request, HttpServletResponse response, WrapperType writer)
 	{
 		throw new NotImplementedException();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#connect(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.PrintStream)
-	 */
 	@Override
-	public int connect(HttpServletRequest request, HttpServletResponse response, StringWriter writer)
+	public int connect(HttpServletRequest request, HttpServletResponse response, WrapperType writer)
 	{
 		throw new NotImplementedException();
 	}
+	
+	/**
+	 * Wraps the given {@link StringWriter} to for specialized use. This is
+	 * called automatically on request and is passed to the final implementation
+	 * automatically.
+	 * 
+	 * @param writer - the writer to wrap
+	 * @return the wrapped string writer
+	 */
+	protected abstract WrapperType wrapWriter(StringWriter writer);
 }
