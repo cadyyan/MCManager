@@ -105,7 +105,6 @@ public class WebServer
 	 */
 	public void addHandler(String context, IWebRequestHandler handler)
 	{
-		// TODO: implement handler adding
 		ContextHandler wrapper = new ContextHandler();
 		wrapper.setContextPath(context);
 		wrapper.setHandler(handler);

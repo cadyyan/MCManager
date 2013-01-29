@@ -1,6 +1,6 @@
 package com.theisleoffavalon.mcmanager.network.handler;
 
-import java.io.PrintStream;
+import java.io.StringWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,10 +25,10 @@ public interface IWebRequestHandler extends Handler
 	 * 
 	 * @param request - the request object
 	 * @param response - the response object
-	 * @param out - the stream to write out to
+	 * @param writer - the stream to write out to
 	 * @return the status code result
 	 */
-	public int get(HttpServletRequest request, HttpServletResponse response, PrintStream out);
+	public int get(HttpServletRequest request, HttpServletResponse response, StringWriter writer);
 	
 	/**
 	 * Handles HTTP-HEAD requests. This is optional
@@ -36,20 +36,20 @@ public interface IWebRequestHandler extends Handler
 	 * 
 	 * @param request - the request object
 	 * @param response - the response object
-	 * @param out - the stream to write out to
+	 * @param writer - the stream to write out to
 	 * @return the status code result
 	 */
-	public int head(HttpServletRequest request, HttpServletResponse response, PrintStream out);
+	public int head(HttpServletRequest request, HttpServletResponse response, StringWriter writer);
 	
 	/**
 	 * Handles HTTP-POST requests.
 	 * 
 	 * @param request - the request object
 	 * @param response - the response object
-	 * @param out - the stream to write out to
+	 * @param writer - the stream to write out to
 	 * @return the status code result
 	 */
-	public int post(HttpServletRequest request, HttpServletResponse response, PrintStream out);
+	public int post(HttpServletRequest request, HttpServletResponse response, StringWriter writer);
 	
 	/**
 	 * Handles HTTP-PUT requests. This is optional
@@ -57,10 +57,10 @@ public interface IWebRequestHandler extends Handler
 	 * 
 	 * @param request - the request object
 	 * @param response - the response object
-	 * @param out - the stream to write out to
+	 * @param writer - the stream to write out to
 	 * @return the status code result
 	 */
-	public int put(HttpServletRequest request, HttpServletResponse response, PrintStream out);
+	public int put(HttpServletRequest request, HttpServletResponse response, StringWriter writer);
 	
 	/**
 	 * Handles HTTP-DELETE requests. This is optional
@@ -68,10 +68,10 @@ public interface IWebRequestHandler extends Handler
 	 * 
 	 * @param request - the request object
 	 * @param response - the response object
-	 * @param out - the stream to write out to
+	 * @param writer - the stream to write out to
 	 * @return the status code result
 	 */
-	public int delete(HttpServletRequest request, HttpServletResponse response, PrintStream out);
+	public int delete(HttpServletRequest request, HttpServletResponse response, StringWriter writer);
 	
 	/**
 	 * Handles the HTTP-TRACE requests. This is optional
@@ -79,10 +79,10 @@ public interface IWebRequestHandler extends Handler
 	 * 
 	 * @param request - the request object
 	 * @param response - the response object
-	 * @param out - the stream to write out to
+	 * @param writer - the stream to write out to
 	 * @return the status code result
 	 */
-	public int trace(HttpServletRequest request, HttpServletResponse response, PrintStream out);
+	public int trace(HttpServletRequest request, HttpServletResponse response, StringWriter writer);
 	
 	/**
 	 * Handles the HTTP-CONNECT requests. This is optional
@@ -90,8 +90,8 @@ public interface IWebRequestHandler extends Handler
 	 * 
 	 * @param request - the request object
 	 * @param response - the response object
-	 * @param out - the stream to write out to
+	 * @param writer - the stream to write out to
 	 * @return the status code result
 	 */
-	public int connect(HttpServletRequest request, HttpServletResponse response, PrintStream out);
+	public int connect(HttpServletRequest request, HttpServletResponse response, StringWriter writer);
 }

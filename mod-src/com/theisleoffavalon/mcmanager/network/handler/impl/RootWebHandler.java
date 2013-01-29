@@ -1,6 +1,6 @@
 package com.theisleoffavalon.mcmanager.network.handler.impl;
 
-import java.io.PrintStream;
+import java.io.StringWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,22 +19,22 @@ public class RootWebHandler extends HtmlWebRequestHandler
 {
 	/*
 	 * (non-Javadoc)
-	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#get(com.sun.net.httpserver.HttpExchange, java.io.PrintStream)
+	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#get(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.StringWriter)
 	 */
 	@Override
-	public int get(HttpServletRequest request, HttpServletResponse response, PrintStream out)
+	public int get(HttpServletRequest request, HttpServletResponse response, StringWriter writer)
 	{
-		out.println("<html><head><title>It Works!</title></head><body><h1>It Works!</h1></body></html>");
+		writer.append("<html><head><title>It Works!</title></head><body><h1>It Works!</h1></body></html>");
 		
 		return HttpServletResponse.SC_OK;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#post(com.sun.net.httpserver.HttpExchange)
+	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#post(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.StringWriter)
 	 */
 	@Override
-	public int post(HttpServletRequest request, HttpServletResponse response, PrintStream out)
+	public int post(HttpServletRequest request, HttpServletResponse response, StringWriter writer)
 	{
 		return -1;
 	}

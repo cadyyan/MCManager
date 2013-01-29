@@ -1,8 +1,7 @@
 package com.theisleoffavalon.mcmanager.network.handler;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -35,21 +34,20 @@ public abstract class BaseWebRequestHandler extends AbstractHandler implements I
 		try
 		{
 			String methodName = request.getMethod().toLowerCase();
-			ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-			PrintStream wrappedStream = new PrintStream(buffer);
+			StringWriter writer = new StringWriter();
 			
 			try
 			{
 				Class<? extends IWebRequestHandler> type = getClass();
-				Method method = type.getMethod(methodName, HttpServletRequest.class, HttpServletResponse.class, PrintStream.class);
+				Method method = type.getMethod(methodName, HttpServletRequest.class, HttpServletResponse.class, StringWriter.class);
 				
-				int code = (int)method.invoke(this, request, response, wrappedStream);
+				int code = (int)method.invoke(this, request, response, writer);
 				
-				byte byteBuffer[] = buffer.toByteArray();
-				int length = byteBuffer.length;
+				writer.flush();
+				String outputString = writer.toString();
 				
 				response.setStatus(code);
-				response.getOutputStream().write(byteBuffer);
+				response.getOutputStream().print(outputString);
 			}
 			catch(NotImplementedException e)
 			{
@@ -88,10 +86,10 @@ public abstract class BaseWebRequestHandler extends AbstractHandler implements I
 	
 	/*
 	 * (non-Javadoc)
-	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#head(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.PrintStream)
+	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#head(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.StringWriter)
 	 */
 	@Override
-	public int head(HttpServletRequest request, HttpServletResponse response, PrintStream out)
+	public int head(HttpServletRequest request, HttpServletResponse response, StringWriter writer)
 	{
 		throw new NotImplementedException();
 	}
@@ -101,7 +99,7 @@ public abstract class BaseWebRequestHandler extends AbstractHandler implements I
 	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#put(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.PrintStream)
 	 */
 	@Override
-	public int put(HttpServletRequest request, HttpServletResponse response, PrintStream out)
+	public int put(HttpServletRequest request, HttpServletResponse response, StringWriter writer)
 	{
 		throw new NotImplementedException();
 	}
@@ -111,7 +109,7 @@ public abstract class BaseWebRequestHandler extends AbstractHandler implements I
 	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#delete(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.PrintStream)
 	 */
 	@Override
-	public int delete(HttpServletRequest request, HttpServletResponse response, PrintStream out)
+	public int delete(HttpServletRequest request, HttpServletResponse response, StringWriter writer)
 	{
 		throw new NotImplementedException();
 	}
@@ -121,7 +119,7 @@ public abstract class BaseWebRequestHandler extends AbstractHandler implements I
 	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#trace(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.PrintStream)
 	 */
 	@Override
-	public int trace(HttpServletRequest request, HttpServletResponse response, PrintStream out)
+	public int trace(HttpServletRequest request, HttpServletResponse response, StringWriter writer)
 	{
 		throw new NotImplementedException();
 	}
@@ -131,7 +129,7 @@ public abstract class BaseWebRequestHandler extends AbstractHandler implements I
 	 * @see com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler#connect(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.PrintStream)
 	 */
 	@Override
-	public int connect(HttpServletRequest request, HttpServletResponse response, PrintStream out)
+	public int connect(HttpServletRequest request, HttpServletResponse response, StringWriter writer)
 	{
 		throw new NotImplementedException();
 	}
