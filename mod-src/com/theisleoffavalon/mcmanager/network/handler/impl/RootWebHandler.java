@@ -18,7 +18,7 @@ import com.theisleoffavalon.mcmanager.network.handler.HtmlWebRequestHandler;
 public class RootWebHandler extends HtmlWebRequestHandler
 {
 	@Override
-	public int get(HttpServletRequest request, HttpServletResponse response, StringWriter writer)
+	public int get(HttpServletRequest request, HttpServletResponse response, String formattedResponse, StringWriter writer)
 	{
 		writer.append("<html><head><title>It Works!</title></head><body><h1>It Works!</h1></body></html>");
 		
@@ -26,7 +26,7 @@ public class RootWebHandler extends HtmlWebRequestHandler
 	}
 
 	@Override
-	public int post(HttpServletRequest request, HttpServletResponse response, StringWriter writer)
+	public int post(HttpServletRequest request, HttpServletResponse response, String formattedResponse, StringWriter writer)
 	{
 		return -1;
 	}

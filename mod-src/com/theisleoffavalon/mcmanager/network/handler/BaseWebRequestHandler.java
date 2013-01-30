@@ -1,6 +1,7 @@
 package com.theisleoffavalon.mcmanager.network.handler;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -22,7 +23,7 @@ import com.theisleoffavalon.mcmanager.util.LogHelper;
  * @author Cadyyan
  *
  */
-public abstract class BaseWebRequestHandler<WrapperType> extends AbstractHandler implements IWebRequestHandler<WrapperType>
+public abstract class BaseWebRequestHandler<InputFormat, OutputFormat> extends AbstractHandler implements IWebRequestHandler<InputFormat, OutputFormat>
 {
 	@Override
 	public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
@@ -30,18 +31,17 @@ public abstract class BaseWebRequestHandler<WrapperType> extends AbstractHandler
 		try
 		{
 			String methodName = request.getMethod().toLowerCase();
-			StringWriter writer = new StringWriter();
-			WrapperType wrapper = wrapWriter(writer);
+			InputFormat formattedResponse = createInputFormatter(request.getInputStream());
+			OutputFormat output = createOutputFormatter();
 			
 			try
 			{
 				Class<? extends IWebRequestHandler> type = getClass();
-				Method method = type.getMethod(methodName, HttpServletRequest.class, HttpServletResponse.class, wrapper.getClass());
+				Method method = type.getMethod(methodName, HttpServletRequest.class, HttpServletResponse.class, formattedResponse.getClass(), output.getClass());
 				
-				int code = (int)method.invoke(this, request, response, writer);
+				int code = (int)method.invoke(this, request, response, formattedResponse, output);
 				
-				writer.flush();
-				String outputString = writer.toString();
+				String outputString = formatOutput(output);
 				
 				response.setStatus(code);
 				response.getOutputStream().print(outputString);
@@ -75,49 +75,64 @@ public abstract class BaseWebRequestHandler<WrapperType> extends AbstractHandler
 			}
 			catch(IOException e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LogHelper.error("There was a severe error when trying to communicate with a web client.\n" +
+								e.getMessage());
 			}
 		}
 	}
 	
 	@Override
-	public int head(HttpServletRequest request, HttpServletResponse response, WrapperType writer)
+	public int head(HttpServletRequest request, HttpServletResponse response, InputFormat formattedRequest, OutputFormat formattedResponse)
 	{
 		throw new NotImplementedException();
 	}
 	
 	@Override
-	public int put(HttpServletRequest request, HttpServletResponse response, WrapperType writer)
+	public int put(HttpServletRequest request, HttpServletResponse response, InputFormat formattedRequest, OutputFormat formattedResponse)
 	{
 		throw new NotImplementedException();
 	}
 	
 	@Override
-	public int delete(HttpServletRequest request, HttpServletResponse response, WrapperType writer)
+	public int delete(HttpServletRequest request, HttpServletResponse response, InputFormat formattedRequest, OutputFormat formattedResponse)
 	{
 		throw new NotImplementedException();
 	}
 	
 	@Override
-	public int trace(HttpServletRequest request, HttpServletResponse response, WrapperType writer)
+	public int trace(HttpServletRequest request, HttpServletResponse response, InputFormat formattedRequest, OutputFormat formattedResponse)
 	{
 		throw new NotImplementedException();
 	}
 	
 	@Override
-	public int connect(HttpServletRequest request, HttpServletResponse response, WrapperType writer)
+	public int connect(HttpServletRequest request, HttpServletResponse response, InputFormat formattedRequest, OutputFormat formattedResponse)
 	{
 		throw new NotImplementedException();
 	}
 	
 	/**
-	 * Wraps the given {@link StringWriter} to for specialized use. This is
-	 * called automatically on request and is passed to the final implementation
-	 * automatically.
+	 * Gets the formatted response body for the request.
 	 * 
-	 * @param writer - the writer to wrap
-	 * @return the wrapped string writer
+	 * @param responseBody - the response body as a stream
+	 * @return the formatted request data
+	 * @throws IOException when reading the data fails
 	 */
-	protected abstract WrapperType wrapWriter(StringWriter writer);
+	protected abstract InputFormat createInputFormatter(InputStream responseBody) throws IOException;
+	
+	/**
+	 * Creates a new formatter that can be used to hold data
+	 * until its ready to be sent.
+	 * 
+	 * @return the formatter
+	 */
+	protected abstract OutputFormat createOutputFormatter();
+	
+	/**
+	 * Generates a string from the formatter.
+	 * 
+	 * @param formatter - the formatter object
+	 * @return the string that was generated
+	 */
+	protected abstract String formatOutput(OutputFormat formatter);
 }

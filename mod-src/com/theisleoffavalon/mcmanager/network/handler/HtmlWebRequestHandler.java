@@ -1,5 +1,6 @@
 package com.theisleoffavalon.mcmanager.network.handler;
 
+import java.io.InputStream;
 import java.io.StringWriter;
 
 /**
@@ -9,11 +10,24 @@ import java.io.StringWriter;
  * @author Cadyyan
  *
  */
-public abstract class HtmlWebRequestHandler extends BaseWebRequestHandler<StringWriter>
+public abstract class HtmlWebRequestHandler extends BaseWebRequestHandler<String, StringWriter>
 {
 	@Override
-	public StringWriter wrapWriter(StringWriter writer)
+	protected String createInputFormatter(InputStream responseBody)
 	{
-		return writer;
+		return ""; // TODO: actually use the input
+	}
+	
+	@Override
+	protected StringWriter createOutputFormatter()
+	{
+		return new StringWriter();
+	}
+	
+	@Override
+	protected String formatOutput(StringWriter formatter)
+	{
+		formatter.flush();
+		return formatter.toString();
 	}
 }
