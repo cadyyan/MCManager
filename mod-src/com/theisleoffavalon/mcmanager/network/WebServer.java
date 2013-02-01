@@ -25,7 +25,6 @@ import org.eclipse.jetty.server.handler.HandlerCollection;
 
 import com.theisleoffavalon.mcmanager.network.handler.HtmlWebRequestHandler;
 import com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler;
-import com.theisleoffavalon.mcmanager.network.handler.impl.JsonGarbage;
 import com.theisleoffavalon.mcmanager.network.handler.impl.RootWebHandler;
 import com.theisleoffavalon.mcmanager.util.LogHelper;
 
@@ -79,7 +78,6 @@ public class WebServer
 		
 		rootHandler = new RootWebHandler();
 		addHandler("/", rootHandler);
-		addHandler("/test", new JsonGarbage());
 	}
 	
 	/**
