@@ -16,12 +16,15 @@
 
 package com.theisleoffavalon.mcmanager.network.handler.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.theisleoffavalon.mcmanager.network.handler.HtmlWebRequestHandler;
+import com.theisleoffavalon.mcmanager.util.LogHelper;
 
 /**
  * Handles requests that go to the root context. This should
@@ -36,9 +39,22 @@ public class RootWebHandler extends HtmlWebRequestHandler
 	@Override
 	public int get(HttpServletRequest request, HttpServletResponse response, String formattedResponse, StringWriter writer)
 	{
-		writer.append("<html><head><title>It Works!</title></head><body><h1>It Works!</h1></body></html>");
-		
-		return HttpServletResponse.SC_OK;
+		try
+		{
+			// Not the most efficient way of serving up a file but it'll work.
+			InputStream html = getClass().getClassLoader().getResourceAsStream("web/control_panel.html");
+			
+			byte buf[] = new byte[html.available()];
+			html.read(buf);
+			writer.write(new String(buf));
+			
+			return HttpServletResponse.SC_OK;
+		}
+		catch(IOException e)
+		{
+			LogHelper.error(e.getMessage());
+			return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+		}
 	}
 
 	@Override
