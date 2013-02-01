@@ -32,7 +32,6 @@ import cpw.mods.fml.common.network.*;
  */
 public class ChatInterceptor implements IChatListener
 {
-
 	/**
 	 * Holds a List of ChatRelays
 	 */
@@ -87,5 +86,4 @@ public class ChatInterceptor implements IChatListener
 			cr.chatHasArrived(message);
 		}
 	}
-
 }
