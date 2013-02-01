@@ -1,0 +1,343 @@
+<!--
+ - DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+ -                    Version 2, December 2004
+ - 
+ - Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
+ - 
+ - Everyone is permitted to copy and distribute verbatim or modified
+ - copies of this license document, and changing it is allowed as long
+ - as the name is changed.
+ - 
+ -            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+ -   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+ - 
+ - 0. You just DO WHAT THE FUCK YOU WANT TO.
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+	   <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	   <title>MCManager</title>
+	   
+	   <link rel="Stylesheet" href="http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css" />
+	   
+	   <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.0.js"></script>
+	   <script type="text/javascript" src="http://code.jquery.com/ui/1.10.0/jquery-ui.js"></script>
+	</head>
+	<body>
+		<style type="text/css">
+			#header
+			{
+				border-bottom: 0px;
+				height: 100px;
+				margin: 1em 1em 0px;
+			}
+			
+			#header h1
+			{
+				margin: 27px 0.5em;
+			}
+			
+			nav
+			{
+				border-top: 0px;
+				border-bottom: 0px;
+				height: 36px;
+				margin: 0px 1em;
+			}
+			
+			nav ul
+			{
+				list-style: none;
+				height: 29px;
+				margin: 0px;
+				padding: 6px 0px 0px 4px;
+			}
+			
+			nav ul li
+			{
+				cursor: pointer;
+				display: inline;
+				float: left;
+				padding: 3px 6px 4px;
+			}
+			
+			nav ul li.ui-state-active
+			{
+				font-weight: bold !important;
+			}
+			
+			nav ul li a
+			{
+				display: block;
+			}
+			
+			#content
+			{
+				border-top: 0px;
+				border-bottom: 0px;
+				margin: 0px 1em;
+				min-height: 4em;
+				padding: 1em;
+			}
+			
+			#content>div
+			{
+				height: 100%;
+			}
+			
+			#content>div:not(.selected)
+			{
+				display: none;
+			}
+			
+			div.section
+			{
+				margin-bottom: 1em;
+				min-height: 3em;
+				padding: 0.5em;
+			}
+			
+			div.section:last-child
+			{
+				margin-bottom: 0px;
+			}
+			
+			div.section div.title
+			{
+				border-top: none;
+				border-left: none;
+				border-right: none;
+				margin: -0.5em -0.5em 0.5em;
+				padding: 2px 0.5em;
+			}
+			
+			#content div[name=console] div.section ul
+			{
+				list-style: none;
+				margin: 0px;
+				padding: 0px;
+			}
+			
+			#content div[name=console] div.section ul li
+			{
+				border-bottom: 1px solid #AAA;
+				padding: 4px 6px;
+			}
+			
+			#content div[name=console] div.section ul li:last-child
+			{
+				border-bottom: none;
+			}
+			
+			#content div[name=mods] div.section table
+			{
+				border-collapse: collapse;
+				width: 100%;
+			}
+			
+			#content div[name=mods] div.section table td
+			{
+				border-right: 1px solid #AAA;
+				border-bottom: 1px solid #AAA;
+				text-align: center;
+			}
+			
+			#command-args
+			{
+				height: 36px;
+				top: 2px;
+			}
+			
+			#status-bar
+			{
+				height: 26px;
+				margin: 0px 1em 1em;
+				padding: 4px;
+			}
+			
+			#settings
+			{
+				float: right;
+				margin-top: -2px;
+				padding-bottom: 2px;
+				width: 1.75em;
+			}
+			
+			#settings span.ui-icon
+			{
+				margin-left: -9px;
+			}
+			
+			#settings span.ui-button-text
+			{
+				padding: 2px;
+			}
+			
+			#settings-dialog ul
+			{
+				list-style: none;
+				padding: 0px;
+			}
+			
+			#settings-dialog ul li:not(:last-child)
+			{
+				margin-bottom: 0.5em;
+			}
+			
+			#settings-dialog ul li a
+			{
+				width: 100%;
+			}
+		</style>
+		
+		<script type="text/javascript">
+			var RPC_URL = '/rpc';
+		
+			$(document).ready(function () {
+				$('nav ul').append(new Tab('Info', 'info'))
+						   .append(new Tab('Console', 'console'))
+						   .append(new Tab('Mods', 'mods'));
+				
+				var sections = $('#content div.section');
+				for (var i = 0; i != sections.length; i++) {
+					var section = $(sections[i]);
+					section.addClass('ui-widget-content ui-corner-all');
+					
+					var header = $('<div>').html(section.attr('title'))
+										   .addClass('title ui-widget-header');
+					
+					section.prepend(header);
+				}
+				
+				$('#content th').addClass('ui-widget-header');
+				
+				$('#command-send').button();
+				
+				$('#settings').button({
+					icons: {
+						primary: 'ui-icon-gear'
+					},
+					text: false
+				}).click(function () {
+					$('#settings-dialog').dialog('open');
+				});
+				
+				$('#settings-dialog').dialog({
+					autoOpen: false,
+					minHeight: 'auto'
+				});
+				
+				$('#settings-dialog ul li a').button();
+				$('#disconnect').button('disable');
+				
+				$(window).resize(function () {
+					$('#content').height($(window).height() - $('#header').outerHeight(true)
+															- $('nav').outerHeight(true)
+															- $('#status-bar').outerHeight(true)
+															- 35);
+					
+					var console = $('#console');
+					console.height($('#content').height() - 150);
+				}).resize();
+			});
+			
+			function Tab(name, body) {
+				var tab = $('<li>');
+				
+				tab.addClass('ui-widget-header ui-corner-top');
+				
+				tab.append($('<a>').html(name)
+								   .attr('body', body)
+								   .click(changeTab));
+				
+				var body = $('#content div[name=' + body + ']');
+				
+				if ($('nav ul li').length == 0) {
+					tab.addClass('ui-state-active');
+					body.addClass('selected');
+				}
+				
+				return tab;
+			}
+			
+			function changeTab() {
+				$('nav ul li.ui-state-active').removeClass('ui-state-active');
+				$('#content div.selected').removeClass('selected');
+			
+				var tabAnchor = $(this);
+				var tab = tabAnchor.closest('li').addClass('selected');
+				tab.addClass('ui-state-active');
+				
+				var body = $('#content div[name=' + tabAnchor.attr('body') + ']');
+				body.addClass('selected');
+			}
+		</script>
+	
+		<div id="header" class="ui-widget ui-widget-header ui-corner-top">
+			<h1>MCManager</h1>
+		</div>
+		<nav class="ui-widget ui-widget-header">
+			<ul>
+			</ul>
+		</nav>
+		<div id="content" class="ui-widget ui-widget-content">
+			<div name="info">
+				<div class="section" title="Server Info">
+					<label>Uptime: </label><span>Forever</span>
+				</div>
+			</div>
+			<div name="console">
+				<div class="section" title="Console Output">
+					<ul id="console">
+						<li>Cadyyan says hi!</li>
+						<li>Server says hi!</hi>
+					</ul>
+				</div>
+				<div class="section" title="Command">
+					<select id="command-select">
+						<option value="give" selected="selected">give</option>
+					</select>
+					<input id="command-args" class="ui-widget ui-state-default ui-corner-all" />
+					<button id="command-send">Send</button>
+				</div>
+			</div>
+			<div name="mods">
+				<div class="section" title="Mods Enabled">
+					<table id="mods" class="ui-widget-content">
+						<thead>
+							<tr>
+								<th>Mod</th>
+								<th>Version</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>FooCraft</td>
+								<td>1.3.3.7</td>
+							</tr>
+							<tr>
+								<td>BarCraft</td>
+								<td>6.0.0.65</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div id="status-bar" class="ui-widget ui-widget-header ui-corner-bottom">
+			<label>Connected to:</label>
+			<span id="server-connection">Nothing</span>
+			<a id="settings">Settings</a>
+		</div>
+		
+		<!-- Here be dialogs! -->
+		<div id="settings-dialog" title="Settings">
+			<ul>
+				<li><a id="select-profile">Select Profile</a></li>
+				<li><a id="disconnect">Disconnect</a></li>
+			</ul>
+		</div>
+	</body>
+</html>
