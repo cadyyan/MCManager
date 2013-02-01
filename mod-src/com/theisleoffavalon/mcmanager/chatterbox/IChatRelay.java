@@ -13,20 +13,24 @@
  * 
  * 0. You just DO WHAT THE FUCK YOU WANT TO.
  */
-package com.theisleoffavalon.chatterbox;
+package com.theisleoffavalon.mcmanager.chatterbox;
 
 /**
- * Interface that people extend if they want to get chat messages
- * from the server.
+ * Interface that people extend if they want to get chat messages from the
+ * server.
+ * 
  * @author SgtHotshot09
- *
+ * 
  */
-public interface ChatRelay {
+public interface IChatRelay
+{
 
-    /**
-     * This method is called when a message has arrived from Forge/Minecraft
-     * @param message A String that holds the message.
-     */
-    public void chatHasArrived(String message);
-    
+	/**
+	 * This method is called when a message has arrived from Forge/Minecraft
+	 * 
+	 * @param message
+	 *            A String that holds the message.
+	 */
+	public void chatHasArrived(String message);
+
 }

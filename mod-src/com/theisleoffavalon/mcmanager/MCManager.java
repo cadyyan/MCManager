@@ -18,6 +18,7 @@ package com.theisleoffavalon.mcmanager;
 
 import java.io.IOException;
 
+import com.theisleoffavalon.mcmanager.chatterbox.ChatInterceptor;
 import com.theisleoffavalon.mcmanager.network.WebServer;
 import com.theisleoffavalon.mcmanager.proxy.MCManagerProxy;
 import com.theisleoffavalon.mcmanager.util.LogHelper;
@@ -62,6 +63,12 @@ public class MCManager
 	private WebServer webServer;
 	
 	/**
+	 * The ChatInterceptor
+	 */
+	private ChatInterceptor chatInterceptor;
+	
+	
+	/**
 	 * Called when the mod is in the pre-initialization phase.
 	 * 
 	 * @param event - the event information
@@ -75,6 +82,8 @@ public class MCManager
 		// TODO: pre-init
 	}
 	
+	
+	
 	/**
 	 * Called when the mod is in the initialization phase.
 	 * 
@@ -87,6 +96,7 @@ public class MCManager
 		LogHelper.info("Initializing...");
 		
 		webServer = proxy.createWebServer();
+		chatInterceptor = new ChatInterceptor();
 		if(webServer == null)
 			LogHelper.warning("Could not create the web server. Is this a client? If so this is a server mod only.");
 	}
@@ -120,4 +130,14 @@ public class MCManager
 		
 		LogHelper.info("MCManager stopped.");
 	}
+	
+	/**
+	 * Returns an instance of a ChatInterceptor
+	 * @return ChatInterceptor
+	 */
+	public ChatInterceptor getChatInterceptor()
+    {
+		return chatInterceptor;
+    }
+	
 }
