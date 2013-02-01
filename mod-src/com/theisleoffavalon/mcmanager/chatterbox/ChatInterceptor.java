@@ -50,7 +50,7 @@ public class ChatInterceptor implements IChatListener
 	public Packet3Chat serverChat(NetHandler handler, Packet3Chat message)
 	{
 		// TODO: use the chat message
-		
+		chatHasArrived("<" + handler.getPlayer().username + ">" + message.message);
 		return message;
 	}
 
@@ -58,7 +58,7 @@ public class ChatInterceptor implements IChatListener
 	public Packet3Chat clientChat(NetHandler handler, Packet3Chat message)
 	{
 		// TODO: use the chat message
-		
+		chatHasArrived("<" + handler.getPlayer().username + ">" + message.message);
 		return message;
 	}
 	
@@ -72,6 +72,16 @@ public class ChatInterceptor implements IChatListener
 	{
 		chatRelays.add(cr);
 	}
+	
+	/**
+	 * UnRegisters a ChatRelay with the system
+	 * @param cr ChatRelay
+	 */
+	public void unregisterChatRelay(IChatRelay cr)
+	{
+		chatRelays.remove(cr);
+	}
+	
 
 	/**
 	 * Is called when a chat Has arrived to be distributed
