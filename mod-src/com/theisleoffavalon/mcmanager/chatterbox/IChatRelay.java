@@ -13,6 +13,7 @@
  * 
  * 0. You just DO WHAT THE FUCK YOU WANT TO.
  */
+
 package com.theisleoffavalon.mcmanager.chatterbox;
 
 /**
@@ -24,13 +25,10 @@ package com.theisleoffavalon.mcmanager.chatterbox;
  */
 public interface IChatRelay
 {
-
 	/**
 	 * This method is called when a message has arrived from Forge/Minecraft
 	 * 
-	 * @param message
-	 *            A String that holds the message.
+	 * @param message - A String that holds the message.
 	 */
 	public void chatHasArrived(String message);
-
 }

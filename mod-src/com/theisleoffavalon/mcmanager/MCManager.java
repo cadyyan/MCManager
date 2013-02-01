@@ -67,7 +67,6 @@ public class MCManager
 	 */
 	private ChatInterceptor chatInterceptor;
 	
-	
 	/**
 	 * Called when the mod is in the pre-initialization phase.
 	 * 
@@ -81,8 +80,6 @@ public class MCManager
 		
 		// TODO: pre-init
 	}
-	
-	
 	
 	/**
 	 * Called when the mod is in the initialization phase.
@@ -133,7 +130,8 @@ public class MCManager
 	
 	/**
 	 * Returns an instance of a ChatInterceptor
-	 * @return ChatInterceptor
+	 * 
+	 * @return the chat interceptor instance
 	 */
 	public ChatInterceptor getChatInterceptor()
     {

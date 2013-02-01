@@ -13,6 +13,7 @@
  * 
  * 0. You just DO WHAT THE FUCK YOU WANT TO.
  */
+
 package com.theisleoffavalon.mcmanager.chatterbox;
 
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public class ChatInterceptor implements IChatListener
 	private List<IChatRelay> chatRelays = new ArrayList<IChatRelay>();
 
 	/**
-	 * Contructs a ChatInterceptor which is an IChatListener. It then registers
+	 * Constructs a ChatInterceptor which is an IChatListener. It then registers
 	 * the ChatInterceptor with the NetworkRegistry
 	 */
 	public ChatInterceptor()
@@ -49,16 +50,16 @@ public class ChatInterceptor implements IChatListener
 	@Override
 	public Packet3Chat serverChat(NetHandler handler, Packet3Chat message)
 	{
-
-		System.out.println(message.message);
+		// TODO: use the chat message
+		
 		return message;
 	}
 
 	@Override
 	public Packet3Chat clientChat(NetHandler handler, Packet3Chat message)
 	{
-
-		System.out.println(message.message);
+		// TODO: use the chat message
+		
 		return message;
 	}
 	
