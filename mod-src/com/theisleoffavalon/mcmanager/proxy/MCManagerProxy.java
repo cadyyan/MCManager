@@ -18,6 +18,7 @@ package com.theisleoffavalon.mcmanager.proxy;
 
 import java.io.IOException;
 
+import com.theisleoffavalon.mcmanager.chatterbox.ChatIntercepter;
 import com.theisleoffavalon.mcmanager.network.WebServer;
 
 /**
@@ -39,6 +40,16 @@ public abstract class MCManagerProxy
 	 * @throws IOException thrown when a network error prevents instantiation
 	 */
 	public WebServer createWebServer() throws IOException
+	{
+		return null;
+	}
+	
+	/**
+	 * Creates an instance of a chat intercepter. This should be done server side only.
+	 * 
+	 * @return a chat intercepter
+	 */
+	public ChatIntercepter createChatIntercepter()
 	{
 		return null;
 	}

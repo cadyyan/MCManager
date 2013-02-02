@@ -18,7 +18,7 @@ package com.theisleoffavalon.mcmanager;
 
 import java.io.IOException;
 
-import com.theisleoffavalon.mcmanager.chatterbox.ChatInterceptor;
+import com.theisleoffavalon.mcmanager.chatterbox.ChatIntercepter;
 import com.theisleoffavalon.mcmanager.network.WebServer;
 import com.theisleoffavalon.mcmanager.proxy.MCManagerProxy;
 import com.theisleoffavalon.mcmanager.util.LogHelper;
@@ -34,6 +34,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStoppedEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
 
 /**
  * The main class for the Forge mod.
@@ -65,7 +66,7 @@ public class MCManager
 	/**
 	 * The ChatInterceptor
 	 */
-	private ChatInterceptor chatInterceptor;
+	private ChatIntercepter chatIntercepter;
 	
 	/**
 	 * Called when the mod is in the pre-initialization phase.
@@ -93,9 +94,12 @@ public class MCManager
 		LogHelper.info("Initializing...");
 		
 		webServer = proxy.createWebServer();
-		chatInterceptor = new ChatInterceptor();
 		if(webServer == null)
 			LogHelper.warning("Could not create the web server. Is this a client? If so this is a server mod only.");
+		
+		chatIntercepter = proxy.createChatIntercepter();
+		if(chatIntercepter == null)
+			LogHelper.warning("Could not create the chat intercepter. Is this a client? If so this is a server mod only.");
 	}
 	
 	/**
@@ -108,6 +112,9 @@ public class MCManager
 	{
 		if(webServer != null)
 			webServer.startServer();
+		
+		if(chatIntercepter != null)
+			NetworkRegistry.instance().registerChatListener(chatIntercepter);
 		
 		LogHelper.info("Finished initializing!");
 	}
@@ -129,13 +136,13 @@ public class MCManager
 	}
 	
 	/**
-	 * Returns an instance of a ChatInterceptor
+	 * Returns an instance of a ChatIntercepter
 	 * 
-	 * @return the chat interceptor instance
+	 * @return the chat intercepter instance
 	 */
-	public ChatInterceptor getChatInterceptor()
+	public ChatIntercepter getChatIntercepter()
     {
-		return chatInterceptor;
+		return chatIntercepter;
     }
 	
 }

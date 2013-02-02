@@ -30,7 +30,7 @@ import cpw.mods.fml.common.network.*;
  * @author SgtHotshot09
  * 
  */
-public class ChatInterceptor implements IChatListener
+public class ChatIntercepter implements IChatListener
 {
 	/**
 	 * Holds a List of ChatRelays
@@ -38,12 +38,10 @@ public class ChatInterceptor implements IChatListener
 	private List<IChatRelay> chatRelays = new ArrayList<IChatRelay>();
 
 	/**
-	 * Constructs a ChatInterceptor which is an IChatListener. It then registers
-	 * the ChatInterceptor with the NetworkRegistry
+	 * Constructs a ChatIntercepter which is an IChatListener.
 	 */
-	public ChatInterceptor()
+	public ChatIntercepter()
 	{
-		NetworkRegistry.instance().registerChatListener(this);
 	}
 
 	@Override
@@ -65,7 +63,7 @@ public class ChatInterceptor implements IChatListener
 	/**
 	 * Register a ChatRelay with the system
 	 * 
-	 * @param cr  ChatRelay
+	 * @param cr - ChatRelay
 	 *            
 	 */
 	public void registerChatRelay(IChatRelay cr)
@@ -75,25 +73,23 @@ public class ChatInterceptor implements IChatListener
 	
 	/**
 	 * UnRegisters a ChatRelay with the system
-	 * @param cr ChatRelay
+	 * 
+	 * @param cr - ChatRelay
 	 */
 	public void unregisterChatRelay(IChatRelay cr)
 	{
 		chatRelays.remove(cr);
 	}
 	
-
 	/**
 	 * Is called when a chat Has arrived to be distributed
 	 * 
-	 * @param message  A message to send
+	 * @param message - A message to send
 	 *            
 	 */
 	public void chatHasArrived(String message)
 	{
 		for(IChatRelay cr : chatRelays)
-		{
 			cr.chatHasArrived(message);
-		}
 	}
 }
