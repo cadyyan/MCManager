@@ -111,7 +111,10 @@ public class MCManager
 	public void postInit(FMLPostInitializationEvent event)
 	{
 		if(webServer != null)
+		{
 			webServer.startServer();
+			webServer.getRpcHandler().addHandler(this);
+		}
 		
 		if(chatIntercepter != null)
 			NetworkRegistry.instance().registerChatListener(chatIntercepter);
@@ -144,5 +147,4 @@ public class MCManager
     {
 		return chatIntercepter;
     }
-	
 }

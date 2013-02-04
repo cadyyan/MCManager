@@ -18,14 +18,14 @@ package com.theisleoffavalon.mcmanager.network;
 
 import java.io.IOException;
 
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 
-import com.theisleoffavalon.mcmanager.network.handler.HtmlWebRequestHandler;
-import com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler;
-import com.theisleoffavalon.mcmanager.network.handler.impl.RootWebHandler;
+import com.theisleoffavalon.mcmanager.network.handler.JsonRpcHandler;
+import com.theisleoffavalon.mcmanager.network.handler.RootHttpHandler;
 import com.theisleoffavalon.mcmanager.util.LogHelper;
 
 /**
@@ -55,7 +55,12 @@ public class WebServer
 	/**
 	 * The handler for the root context.
 	 */
-	private HtmlWebRequestHandler rootHandler;
+	private Handler rootHandler;
+	
+	/**
+	 * The JSON RPC handler.
+	 */
+	private Handler rpcHandler;
 	
 	/**
 	 * Creates an instance of the web server but does not actually start
@@ -76,7 +81,10 @@ public class WebServer
 		handlers = new ContextHandlerCollection();
 		webServer.setHandler(handlers);
 		
-		rootHandler = new RootWebHandler();
+		rpcHandler = new JsonRpcHandler();
+		addHandler("/rpc", rpcHandler);
+		
+		rootHandler = new RootHttpHandler();
 		addHandler("/", rootHandler);
 	}
 	
@@ -119,12 +127,22 @@ public class WebServer
 	 * @param context - the web context this handler listens on
 	 * @param handler - the request handler
 	 */
-	public void addHandler(String context, IWebRequestHandler handler)
+	public void addHandler(String context, Handler handler)
 	{
 		ContextHandler wrapper = new ContextHandler();
 		wrapper.setContextPath(context);
 		wrapper.setHandler(handler);
 		
 		handlers.addHandler(wrapper);
+	}
+	
+	/**
+	 * Gets the JSON RPC handler.
+	 * 
+	 * @return the JSON RPC handler
+	 */
+	public JsonRpcHandler getRpcHandler()
+	{
+		return (JsonRpcHandler)rpcHandler;
 	}
 }

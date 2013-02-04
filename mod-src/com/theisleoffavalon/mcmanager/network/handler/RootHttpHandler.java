@@ -14,16 +14,18 @@
  * 0. You just DO WHAT THE FUCK YOU WANT TO.
  */
 
-package com.theisleoffavalon.mcmanager.network.handler.impl;
+package com.theisleoffavalon.mcmanager.network.handler;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.theisleoffavalon.mcmanager.network.handler.HtmlWebRequestHandler;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.handler.AbstractHandler;
+
 import com.theisleoffavalon.mcmanager.util.LogHelper;
 
 /**
@@ -34,10 +36,10 @@ import com.theisleoffavalon.mcmanager.util.LogHelper;
  * @author Cadyyan
  *
  */
-public class RootWebHandler extends HtmlWebRequestHandler
+public class RootHttpHandler extends AbstractHandler
 {
 	@Override
-	public int get(HttpServletRequest request, HttpServletResponse response, String formattedResponse, StringWriter writer)
+	public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
 	{
 		try
 		{
@@ -46,20 +48,18 @@ public class RootWebHandler extends HtmlWebRequestHandler
 			
 			byte buf[] = new byte[html.available()];
 			html.read(buf);
-			writer.write(new String(buf));
 			
-			return HttpServletResponse.SC_OK;
+			response.setStatus(HttpServletResponse.SC_OK);
+			response.getOutputStream().write(buf);
 		}
 		catch(IOException e)
 		{
 			LogHelper.error(e.getMessage());
-			return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
-	}
-
-	@Override
-	public int post(HttpServletRequest request, HttpServletResponse response, String formattedResponse, StringWriter writer)
-	{
-		return -1;
+		finally
+		{
+			response.getOutputStream().close();
+		}
 	}
 }
