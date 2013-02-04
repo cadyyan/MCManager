@@ -1,16 +1,8 @@
 package com.theisleoffavalon.mcmanager.network.handler.jsonrpc;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.security.InvalidParameterException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
-
-import org.json.simple.JSONAware;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONStreamAware;
 
 /**
  * This is to be used for holding a JSON RPC request.
@@ -42,7 +34,7 @@ public class RpcRequest extends RpcRequestResponse
 	 */
 	public RpcRequest(String method, boolean createID)
 	{
-		this(method, new LinkedHashMap<String, String>(), createID ? UUID.randomUUID().toString() : "");
+		this(method, new LinkedHashMap<String, Object>(), createID ? UUID.randomUUID().toString() : "");
 	}
 	
 	/**
@@ -53,7 +45,7 @@ public class RpcRequest extends RpcRequestResponse
 	 * @param parameters - the parameters
 	 * @param id - the ID of the request (this could be <code>null</code>)
 	 */
-	public RpcRequest(String method, Map<String, String> parameters, String id)
+	public RpcRequest(String method, Map<String, Object> parameters, String id)
 	{
 		super(method, parameters, id);
 	}

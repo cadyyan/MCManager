@@ -52,7 +52,7 @@ public abstract class RpcRequestResponse implements JSONAware, JSONStreamAware
 	/**
 	 * The method parameters.
 	 */
-	protected Map<String, String> params;
+	protected Map<String, Object> params;
 	
 	/**
 	 * The request/response ID. This might be <code>null</code>.
@@ -66,7 +66,7 @@ public abstract class RpcRequestResponse implements JSONAware, JSONStreamAware
 	 * @param parameters - the parameters
 	 * @param id - the ID
 	 */
-	public RpcRequestResponse(String method, Map<String, String> parameters, String id)
+	public RpcRequestResponse(String method, Map<String, Object> parameters, String id)
 	{
 		if(method == null)
 			throw new NullPointerException("The method name of a JSON RPC request/response must not be null.");
@@ -93,7 +93,7 @@ public abstract class RpcRequestResponse implements JSONAware, JSONStreamAware
 	 * 
 	 * @return all of the parameters
 	 */
-	public Map<String, String> getParameters()
+	public Map<String, Object> getParameters()
 	{
 		return params;
 	}
@@ -114,7 +114,7 @@ public abstract class RpcRequestResponse implements JSONAware, JSONStreamAware
 	 * @param parameterName - the parameter name
 	 * @return a parameter value
 	 */
-	public String getParameter(String parameterName)
+	public Object getParameter(String parameterName)
 	{
 		return params.get(parameterName);
 	}
@@ -136,7 +136,7 @@ public abstract class RpcRequestResponse implements JSONAware, JSONStreamAware
 	 * @param parameterName - the name of the parameter
 	 * @param parameterValue - the value of the parameter
 	 */
-	public void addParameter(String parameterName, String parameterValue)
+	public void addParameter(String parameterName, Object parameterValue)
 	{
 		if(parameterName == null)
 			throw new NullPointerException("JSON RPC parameter names cannot be null.");

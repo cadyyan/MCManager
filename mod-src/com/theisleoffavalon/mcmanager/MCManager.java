@@ -108,7 +108,6 @@ public class MCManager
 	public void postInit(FMLPostInitializationEvent event)
 	{
 		webServer.startServer();
-		webServer.getRpcHandler().addHandler(this);
 		
 		NetworkRegistry.instance().registerChatListener(chatIntercepter);
 		

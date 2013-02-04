@@ -24,6 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -107,6 +108,8 @@ public class JsonRpcHandler extends AbstractHandler
 		
 		parser = new JSONParser();
 		methodHandlers = new HashMap<String, MethodHandlerEntry>();
+		
+		addHandler(this);
 	}
 
 	@Override
@@ -200,6 +203,22 @@ public class JsonRpcHandler extends AbstractHandler
 	}
 	
 	/**
+	 * Handles RPC requests for the methods method.
+	 * 
+	 * @param request - the request
+	 * @param response - the response
+	 */
+	@RpcMethod(method = "methods", description = "Get's all available methods implemented by the server. This returns an array of strings with each string being a method name.")
+	public void handleRPCGetAllMethods(RpcRequest request, RpcResponse response)
+	{
+		Set<String> methods = methodHandlers.keySet();
+		JSONArray array = new JSONArray();
+		
+		array.addAll(methods);
+		response.addParameter("methods", array);
+	}
+	
+	/**
 	 * Converts a JSON object that was given by a request to an RPC request.
 	 * 
 	 * @param jsonObj - the JSON request object
@@ -210,7 +229,7 @@ public class JsonRpcHandler extends AbstractHandler
 		String method = (String)jsonObj.get("method");
 		String id = (String)jsonObj.get("id");
 		
-		RpcRequest request = new RpcRequest(method, (Map<String, String>)jsonObj.get("params"), id);
+		RpcRequest request = new RpcRequest(method, (Map<String, Object>)jsonObj.get("params"), id);
 		
 		return request;
 	}

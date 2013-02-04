@@ -21,7 +21,7 @@ import java.util.List;
 
 import net.minecraft.network.packet.NetHandler;
 import net.minecraft.network.packet.Packet3Chat;
-import cpw.mods.fml.common.network.*;
+import cpw.mods.fml.common.network.IChatListener;
 
 /**
  * This class grabs all the chat code from Minecraft and hands it off to who

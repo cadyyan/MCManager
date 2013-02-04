@@ -1,5 +1,10 @@
 package com.theisleoffavalon.mcmanager.network.handler.jsonrpc;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * A method decorator that tells the JSON RPC implementation
  * which method to dispatch a request to based on the request's
@@ -8,6 +13,8 @@ package com.theisleoffavalon.mcmanager.network.handler.jsonrpc;
  * @author Cadyyan
  *
  */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
 public @interface RpcMethod
 {
 	/**

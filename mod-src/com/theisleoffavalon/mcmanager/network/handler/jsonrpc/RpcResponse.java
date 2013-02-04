@@ -5,9 +5,6 @@ import java.io.Writer;
 import java.security.InvalidParameterException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
-
-import org.json.simple.JSONObject;
 
 /**
  * This is to be used to hold a JSON RPC response.
@@ -112,7 +109,7 @@ public class RpcResponse extends RpcRequestResponse
 	 */
 	public RpcResponse(String method, String id)
 	{
-		this(method, new LinkedHashMap<String, String>(), id);
+		this(method, new LinkedHashMap<String, Object>(), id);
 	}
 	
 	/**
@@ -122,7 +119,7 @@ public class RpcResponse extends RpcRequestResponse
 	 * @param parameters - the parameters
 	 * @param id - the ID
 	 */
-	public RpcResponse(String method, Map<String, String> parameters, String id)
+	public RpcResponse(String method, Map<String, Object> parameters, String id)
 	{
 		super(method, parameters, id);
 		
