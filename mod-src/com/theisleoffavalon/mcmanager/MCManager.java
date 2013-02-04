@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import com.theisleoffavalon.mcmanager.chatterbox.ChatIntercepter;
 import com.theisleoffavalon.mcmanager.network.WebServer;
+import com.theisleoffavalon.mcmanager.proxy.MCManagerClientProxy;
 import com.theisleoffavalon.mcmanager.proxy.MCManagerProxy;
 import com.theisleoffavalon.mcmanager.util.LogHelper;
 
@@ -79,7 +80,8 @@ public class MCManager
 	{
 		LogHelper.info("Pre-initializing...");
 		
-		// TODO: pre-init
+		if(proxy instanceof MCManagerClientProxy)
+			throw new RuntimeException("This is a server-side only mod.");
 	}
 	
 	/**
@@ -94,12 +96,7 @@ public class MCManager
 		LogHelper.info("Initializing...");
 		
 		webServer = proxy.createWebServer();
-		if(webServer == null)
-			LogHelper.warning("Could not create the web server. Is this a client? If so this is a server mod only.");
-		
 		chatIntercepter = proxy.createChatIntercepter();
-		if(chatIntercepter == null)
-			LogHelper.warning("Could not create the chat intercepter. Is this a client? If so this is a server mod only.");
 	}
 	
 	/**
@@ -110,14 +107,10 @@ public class MCManager
 	@PostInit
 	public void postInit(FMLPostInitializationEvent event)
 	{
-		if(webServer != null)
-		{
-			webServer.startServer();
-			webServer.getRpcHandler().addHandler(this);
-		}
+		webServer.startServer();
+		webServer.getRpcHandler().addHandler(this);
 		
-		if(chatIntercepter != null)
-			NetworkRegistry.instance().registerChatListener(chatIntercepter);
+		NetworkRegistry.instance().registerChatListener(chatIntercepter);
 		
 		LogHelper.info("Finished initializing!");
 	}
@@ -132,8 +125,7 @@ public class MCManager
 	{
 		LogHelper.info("Stopping MCManager...");
 		
-		if(webServer != null)
-			webServer.stopServer();
+		webServer.stopServer();
 		
 		LogHelper.info("MCManager stopped.");
 	}
