@@ -20,11 +20,11 @@ import java.io.IOException;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 
 import com.theisleoffavalon.mcmanager.network.handler.JsonRpcHandler;
+import com.theisleoffavalon.mcmanager.network.handler.RegExContextHandler;
+import com.theisleoffavalon.mcmanager.network.handler.RegExContextHandlerCollection;
 import com.theisleoffavalon.mcmanager.network.handler.RootHttpHandler;
 import com.theisleoffavalon.mcmanager.util.LogHelper;
 
@@ -78,14 +78,14 @@ public class WebServer
 		// TODO: change the number of threads to be a configuration setting
 		webServer.setThreadPool(null);
 		
-		handlers = new ContextHandlerCollection();
+		handlers = new RegExContextHandlerCollection();
 		webServer.setHandler(handlers);
-		
-		rpcHandler = new JsonRpcHandler();
-		addHandler("/rpc", rpcHandler);
 		
 		rootHandler = new RootHttpHandler();
 		addHandler("/", rootHandler);
+		
+		rpcHandler = new JsonRpcHandler();
+		addHandler("/rpc/*", rpcHandler);
 	}
 	
 	/**
@@ -129,9 +129,7 @@ public class WebServer
 	 */
 	public void addHandler(String context, Handler handler)
 	{
-		ContextHandler wrapper = new ContextHandler();
-		wrapper.setContextPath(context);
-		wrapper.setHandler(handler);
+		RegExContextHandler wrapper = new RegExContextHandler(context, handler);
 		
 		handlers.addHandler(wrapper);
 	}

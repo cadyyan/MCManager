@@ -18,7 +18,6 @@ package com.theisleoffavalon.mcmanager.network.handler;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -125,6 +124,7 @@ public class JsonRpcHandler extends AbstractHandler
 		{
 			LogHelper.warning("Received RPC request that contained invalid JSON.");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			baseRequest.setHandled(true);
 			return;
 		}
 		
@@ -141,14 +141,18 @@ public class JsonRpcHandler extends AbstractHandler
 				{
 					LogHelper.warning("Received RPC request that contained an invalid RPC request.");
 					response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+					baseRequest.setHandled(true);
+					return;
 				}
 				
 				RpcResponse rpcResponse = handleRpcRequest(rpcRequest);
 				batchResponse.add(rpcResponse);
 			}
 			
-			Writer writer = new OutputStreamWriter(response.getOutputStream());
+			Writer writer = response.getWriter();
 			batchResponse.writeJSONString(writer);
+			response.setStatus(HttpServletResponse.SC_OK);
+			baseRequest.setHandled(true);
 		}
 		else if(rawRpcRequest instanceof JSONObject)
 		{
@@ -158,16 +162,21 @@ public class JsonRpcHandler extends AbstractHandler
 			{
 				LogHelper.warning("Received RPC request that contained an invalid RPC request.");
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				baseRequest.setHandled(true);
+				return;
 			}
 			
 			RpcResponse rpcResponse = handleRpcRequest(rpcRequest);
-			Writer writer = new OutputStreamWriter(response.getOutputStream());
+			Writer writer = response.getWriter();
 			rpcResponse.writeJSONString(writer);
+			response.setStatus(HttpServletResponse.SC_OK);
+			baseRequest.setHandled(true);
 		}
 		else
 		{
 			LogHelper.warning("Received RPC request that contained the wrong type of JSON object.");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			baseRequest.setHandled(true);
 			return;
 		}
 	}
@@ -208,7 +217,7 @@ public class JsonRpcHandler extends AbstractHandler
 	 * @param request - the request
 	 * @param response - the response
 	 */
-	@RpcMethod(method = "methods", description = "Get's all available methods implemented by the server. This returns an array of strings with each string being a method name.")
+	@RpcMethod(method = "getAllMethods", description = "Get's all available methods implemented by the server. This returns an array of strings with each string being a method name.")
 	public void handleRPCGetAllMethods(RpcRequest request, RpcResponse response)
 	{
 		Set<String> methods = methodHandlers.keySet();

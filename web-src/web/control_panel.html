@@ -241,6 +241,8 @@
 					var console = $('#console');
 					console.height($('#content').height() - 150);
 				}).resize();
+				
+				setInterval(update, 15000);
 			});
 			
 			function Tab(name, body) {
@@ -272,6 +274,46 @@
 				
 				var body = $('#content div[name=' + tabAnchor.attr('body') + ']');
 				body.addClass('selected');
+			}
+			
+			function RpcRequest() {
+				var json = {
+					
+				};
+				
+				return JSON.stringify(json);
+			}
+			
+			function update() {
+				var json = {jsonrpc: '2.0', method: 'getAllMethods', params: {}, id: 'test'};
+				json = JSON.stringify(json);
+				/*$.ajax({
+				          type: 'POST',
+				          url: '/rpc',
+				          data: json,
+				          success: function (data) {
+				        	           alert('success: ' + JSON.stringify(data));
+				        	       },
+		        	      error: function (jqXHR, textStatus, errorThrown) {
+		        	    	  alert('error: ' + textStatus + " " + errorThrown);
+		        	      },
+		        	      contentType: 'applciation/json; charset=utf-8',
+				          dataType: 'json'
+			          });*/
+			    updateInfo();
+			}
+			
+			function updateInfo() {
+				var json = {}
+				$.ajax({
+					type: 'POST',
+					url: '/rpc',
+					data: json,
+					success: function (date) {
+					},
+					contentType: 'application/json; charset=utf-8,
+					dataType: 'json'
+				});
 			}
 		</script>
 	

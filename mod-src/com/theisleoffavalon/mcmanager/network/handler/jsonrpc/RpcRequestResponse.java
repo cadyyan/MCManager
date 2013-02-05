@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.json.simple.JSONAware;
+import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 
 /**
@@ -149,14 +150,19 @@ public abstract class RpcRequestResponse implements JSONAware, JSONStreamAware
 	@Override
 	public void writeJSONString(Writer out) throws IOException
 	{
-		// TODO Auto-generated method stub
-		
+		out.append(toJSONString());
 	}
 
 	@Override
 	public String toJSONString()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		JSONObject obj = new JSONObject();
+		
+		obj.put(VERSION_PARAM, JSON_RPC_VERSION);
+		obj.put(METHOD_PARAM, method);
+		obj.put(PARAMETERS_PARAM, params);
+		obj.put(ID_PARAM, id);
+		
+		return obj.toJSONString();
 	}
 }

@@ -61,5 +61,7 @@ public class RootHttpHandler extends AbstractHandler
 		{
 			response.getOutputStream().close();
 		}
+		
+		baseRequest.setHandled(true);
 	}
 }

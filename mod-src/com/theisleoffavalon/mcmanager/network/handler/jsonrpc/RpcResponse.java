@@ -6,6 +6,10 @@ import java.security.InvalidParameterException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.json.simple.JSONAware;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONStreamAware;
+
 /**
  * This is to be used to hold a JSON RPC response.
  * The response implemented here is compliant
@@ -64,7 +68,7 @@ public class RpcResponse extends RpcRequestResponse
 	 * @author Cadyyan
 	 *
 	 */
-	public static class Error
+	public static class Error implements JSONAware, JSONStreamAware
 	{
 		/**
 		 * The error code.
@@ -93,6 +97,24 @@ public class RpcResponse extends RpcRequestResponse
 			this.code = code.getErrorCode();
 			this.message = message;
 			this.data = data;
+		}
+
+		@Override
+		public void writeJSONString(Writer out) throws IOException
+		{
+			out.append(toJSONString());
+		}
+
+		@Override
+		public String toJSONString()
+		{
+			JSONObject obj = new JSONObject();
+			
+			obj.put("code", code);
+			obj.put("message", message);
+			obj.put("data", data);
+			
+			return obj.toJSONString();
 		}
 	}
 	
@@ -161,18 +183,20 @@ public class RpcResponse extends RpcRequestResponse
 	{
 		this.error = error;
 	}
-	
-	@Override
-	public void writeJSONString(Writer out) throws IOException
-	{
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public String toJSONString()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		JSONObject obj = new JSONObject();
+		
+		obj.put(VERSION_PARAM, JSON_RPC_VERSION);
+		obj.put(METHOD_PARAM, method);
+		obj.put(PARAMETERS_PARAM, params);
+		obj.put(ID_PARAM, id);
+		
+		if(error != null)
+			obj.put("error", error);
+		
+		return obj.toJSONString();
 	}
 }
