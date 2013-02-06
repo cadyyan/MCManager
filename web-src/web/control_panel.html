@@ -113,6 +113,13 @@
 				padding: 2px 0.5em;
 			}
 			
+			#server-info div.section
+			{
+				display: inline-block;
+				margin-bottom: 0px;
+				text-align: center;
+			}
+			
 			#content div[name=console] div.section ul
 			{
 				list-style: none;
@@ -242,7 +249,8 @@
 					console.height($('#content').height() - 150);
 				}).resize();
 				
-				setInterval(update, 15000);
+				update();
+				setInterval(update, 1000);
 			});
 			
 			function Tab(name, body) {
@@ -276,44 +284,92 @@
 				body.addClass('selected');
 			}
 			
-			function RpcRequest() {
+			function GUID() {
+				var guid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+							var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+							return v.toString(16);
+						});
+				
+				return guid;
+			}
+			
+			function RpcRequest(method, params) {
 				var json = {
-					
+					jsonrpc: '2.0',
+					method: method,
+					params: params,
+					id: GUID()
 				};
 				
 				return JSON.stringify(json);
 			}
 			
+			function RpcAjaxRequest(method, params, success, failure) {
+				$.ajax({
+					url: '/rpc',
+					type: 'POST',
+					contentType: 'application/json; charset=utf-8',
+					data: RpcRequest(method, params),
+					dataType: 'json',
+					success: success,
+					error: failure
+				});
+			}
+			
 			function update() {
-				var json = {jsonrpc: '2.0', method: 'getAllMethods', params: {}, id: 'test'};
-				json = JSON.stringify(json);
-				/*$.ajax({
-				          type: 'POST',
-				          url: '/rpc',
-				          data: json,
-				          success: function (data) {
-				        	           alert('success: ' + JSON.stringify(data));
-				        	       },
-		        	      error: function (jqXHR, textStatus, errorThrown) {
-		        	    	  alert('error: ' + textStatus + " " + errorThrown);
-		        	      },
-		        	      contentType: 'applciation/json; charset=utf-8',
-				          dataType: 'json'
-			          });*/
-			    updateInfo();
+				updateInfo();
 			}
 			
 			function updateInfo() {
-				var json = {}
-				$.ajax({
-					type: 'POST',
-					url: '/rpc',
-					data: json,
-					success: function (date) {
-					},
-					contentType: 'application/json; charset=utf-8,
-					dataType: 'json'
+				RpcAjaxRequest('systemInfo', {}, function (data) {
+					$('#info-uptime').html(formatTime(data.params.uptime));
+					
+					$('#info-usedmemory').html(formatMemory(data.params.usedMemory));
+					
+					$('#info-maxmemory').html(formatMemory(data.params.maxMemory));
 				});
+			}
+			
+			function formatTime(milliseconds) {
+				function pad(value, zeroes) {
+					if (zeroes == undefined) {
+						zeroes = 2;
+					}
+					
+					var ret = '';
+					var digits = (value == 0 ? 0 : Math.floor(Math.log(value) / Math.LN10)) + 1;
+					
+					for (var i = digits; i != zeroes; i++) {
+						ret += '0';
+					}
+					
+					return ret + value;
+				}
+			
+				var days = Math.floor(milliseconds / (1000 * 60 * 60 * 24));
+				milliseconds -= days * 1000 * 60 * 60 * 24;
+				
+				var hours = Math.floor(milliseconds / (1000 * 60 * 60));
+				milliseconds -= hours * 1000 * 60 * 60;
+				
+				var minutes = Math.floor(milliseconds / (1000 * 60));
+				milliseconds -= minutes * 1000 * 60;
+				
+				var seconds = Math.floor(milliseconds / 1000);
+				milliseconds -= seconds * 1000;
+				
+				var format = days > 0 ? (days + ' days ') : '';
+				format += pad(hours) + ':' + pad(minutes) + ':' + pad(seconds) + ':' + pad(milliseconds, 3);
+				
+				return format;
+			}
+			
+			function formatMemory(bytes) {
+				var gigabytes = bytes / (1024 * 1024 * 1024);
+				if (gigabytes >= 1) {
+					var format = Math.round(gigabytes * 100) / 100 + ' GB';
+					return format;
+				}
 			}
 		</script>
 	
@@ -326,8 +382,16 @@
 		</nav>
 		<div id="content" class="ui-widget ui-widget-content">
 			<div name="info">
-				<div class="section" title="Server Info">
-					<label>Uptime: </label><span>Forever</span>
+				<div id="server-info" class="section" title="Server Info">
+				    <div class="section" title="Uptime">
+					   <span id="info-uptime">Offline</span>
+					</div>
+					<div class="section" title="Used Memory">
+					   <span id="info-usedmemory">0 bytes</span>
+					</div>
+					<div class="section" title="Maximum Memory">
+					   <span id="info-maxmemory">0 bytes</span>
+					</div>
 				</div>
 			</div>
 			<div name="console">

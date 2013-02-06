@@ -33,24 +33,4 @@ import com.theisleoffavalon.mcmanager.network.WebServer;
  */
 public abstract class MCManagerProxy
 {
-	/**
-	 * Creates an instance of a web server. This should be done server side only.
-	 * 
-	 * @return a web server instance or null if this is the client
-	 * @throws IOException thrown when a network error prevents instantiation
-	 */
-	public WebServer createWebServer() throws IOException
-	{
-		return null;
-	}
-	
-	/**
-	 * Creates an instance of a chat intercepter. This should be done server side only.
-	 * 
-	 * @return a chat intercepter
-	 */
-	public ChatIntercepter createChatIntercepter()
-	{
-		return null;
-	}
 }

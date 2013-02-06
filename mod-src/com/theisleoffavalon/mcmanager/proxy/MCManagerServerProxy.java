@@ -29,15 +29,4 @@ import com.theisleoffavalon.mcmanager.network.WebServer;
  */
 public class MCManagerServerProxy extends MCManagerProxy
 {
-	@Override
-	public WebServer createWebServer() throws IOException
-	{
-		return new WebServer();
-	}
-	
-	@Override
-	public ChatIntercepter createChatIntercepter()
-	{
-		return new ChatIntercepter();
-	}
 }

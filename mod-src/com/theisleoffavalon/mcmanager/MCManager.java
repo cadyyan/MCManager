@@ -65,6 +65,11 @@ public class MCManager
 	private WebServer webServer;
 	
 	/**
+	 * The server monitor.
+	 */
+	private ServerMonitor serverMonitor;
+	
+	/**
 	 * The ChatInterceptor
 	 */
 	private ChatIntercepter chatIntercepter;
@@ -95,8 +100,9 @@ public class MCManager
 	{
 		LogHelper.info("Initializing...");
 		
-		webServer = proxy.createWebServer();
-		chatIntercepter = proxy.createChatIntercepter();
+		webServer = new WebServer();
+		serverMonitor = new ServerMonitor();
+		chatIntercepter = new ChatIntercepter();
 	}
 	
 	/**
@@ -108,6 +114,8 @@ public class MCManager
 	public void postInit(FMLPostInitializationEvent event)
 	{
 		webServer.startServer();
+		
+		webServer.getRpcHandler().addHandler(serverMonitor);
 		
 		NetworkRegistry.instance().registerChatListener(chatIntercepter);
 		
