@@ -1,5 +1,10 @@
 package com.theisleoffavalon.mcmanager;
 
+import java.util.Arrays;
+import java.util.List;
+
+import net.minecraft.server.MinecraftServer;
+
 import com.theisleoffavalon.mcmanager.network.handler.jsonrpc.RpcMethod;
 import com.theisleoffavalon.mcmanager.network.handler.jsonrpc.RpcRequest;
 import com.theisleoffavalon.mcmanager.network.handler.jsonrpc.RpcResponse;
@@ -13,6 +18,11 @@ import com.theisleoffavalon.mcmanager.network.handler.jsonrpc.RpcResponse;
 public class ServerMonitor
 {
 	/**
+	 * An instance of the server.
+	 */
+	private MinecraftServer server;
+	
+	/**
 	 * The start time of the monitor in seconds. This is assumed to be the up time of the
 	 * server.
 	 */
@@ -23,6 +33,7 @@ public class ServerMonitor
 	 */
 	public ServerMonitor()
 	{
+		this.server = MinecraftServer.getServer();
 		this.startTime = System.currentTimeMillis();
 	}
 	
@@ -57,6 +68,16 @@ public class ServerMonitor
 	}
 	
 	/**
+	 * Gets a list of all the currently online players.
+	 * 
+	 * @return the current player list
+	 */
+	public List<String> getAllOnlinePlayers()
+	{
+		return Arrays.asList(server.getAllUsernames());
+	}
+	
+	/**
 	 * Handles requests for system information.
 	 * 
 	 * @param request - the request
@@ -68,5 +89,6 @@ public class ServerMonitor
 		response.addParameter("uptime", getUpTime());
 		response.addParameter("usedMemory", getUsedMemory());
 		response.addParameter("maxMemory", getMaxAllocatedMemory());
+		response.addParameter("players", getAllOnlinePlayers());
 	}
 }

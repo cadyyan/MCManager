@@ -120,6 +120,23 @@
 				text-align: center;
 			}
 			
+			#player-list ul
+			{
+				list-style: none;
+				margin: 0px;
+				padding: 0px;
+			}
+			
+			#player-list ul li
+			{
+				padding: 4px 8px;
+			}
+			
+			#player-list ul li:not(:last-child)
+			{
+				border-bottom: 1px solid #AAA;
+			}
+			
 			#content div[name=console] div.section ul
 			{
 				list-style: none;
@@ -323,10 +340,16 @@
 			function updateInfo() {
 				RpcAjaxRequest('systemInfo', {}, function (data) {
 					$('#info-uptime').html(formatTime(data.params.uptime));
-					
 					$('#info-usedmemory').html(formatMemory(data.params.usedMemory));
-					
 					$('#info-maxmemory').html(formatMemory(data.params.maxMemory));
+					
+					var playerList = $('#player-list ul');
+					playerList.children().remove();
+					var players = data.params.players;
+					for (var i = 0; i != players.length; i++) {
+						var player = players[i];
+						playerList.append($('<li>').append(player));
+					}
 				});
 			}
 			
@@ -392,6 +415,10 @@
 					<div class="section" title="Maximum Memory">
 					   <span id="info-maxmemory">0 bytes</span>
 					</div>
+				</div>
+				<div id="player-list" class="section" title="Connected Players">
+					<ul>
+					</ul>
 				</div>
 			</div>
 			<div name="console">

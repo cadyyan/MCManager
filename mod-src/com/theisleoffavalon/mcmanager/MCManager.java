@@ -85,8 +85,8 @@ public class MCManager
 	{
 		LogHelper.info("Pre-initializing...");
 		
-		if(proxy instanceof MCManagerClientProxy)
-			throw new RuntimeException("This is a server-side only mod.");
+		//if(proxy instanceof MCManagerClientProxy)
+		//	throw new RuntimeException("This is a server-side only mod.");
 	}
 	
 	/**
