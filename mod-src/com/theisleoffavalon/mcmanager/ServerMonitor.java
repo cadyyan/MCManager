@@ -91,4 +91,16 @@ public class ServerMonitor
 		response.addParameter("maxMemory", getMaxAllocatedMemory());
 		response.addParameter("players", getAllOnlinePlayers());
 	}
+	
+	/**
+	 * Handles requests to stop the server.
+	 * 
+	 * @param request - the request
+	 * @param response - the response
+	 */
+	@RpcMethod(method = "stopServer", description = "Stops the server.")
+	public void stopServer(RpcRequest request, RpcResponse response)
+	{
+		server.initiateShutdown();
+	}
 }

@@ -237,6 +237,12 @@
 				
 				$('#content th').addClass('ui-widget-header');
 				
+				$('#server-controls button').button();
+				$('#stop-server').click(function () {
+					// TODO: add confirmation dialog
+					RpcAjaxRequest('stopServer');
+				});
+				
 				$('#command-send').button();
 				
 				$('#settings').button({
@@ -322,6 +328,10 @@
 			}
 			
 			function RpcAjaxRequest(method, params, success, failure) {
+				if (params == undefined) {
+					params = {};
+				}
+			
 				$.ajax({
 					url: '/rpc',
 					type: 'POST',
@@ -415,6 +425,9 @@
 					<div class="section" title="Maximum Memory">
 					   <span id="info-maxmemory">0 bytes</span>
 					</div>
+				</div>
+				<div id="server-controls" class="section" title="Controls">
+					<button id="stop-server">Stop</button>
 				</div>
 				<div id="player-list" class="section" title="Connected Players">
 					<ul>
