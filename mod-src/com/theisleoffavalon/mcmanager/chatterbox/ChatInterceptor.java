@@ -50,6 +50,7 @@ public class ChatInterceptor implements IChatListener
 	public Packet3Chat serverChat(NetHandler handler, Packet3Chat message)
 	{
 		// TODO: use the chat message
+		
 		chatHasArrived("<" + handler.getPlayer().username + ">" + message.message);
 		return message;
 	}
