@@ -339,9 +339,21 @@
 					params = {};
 				}
 				
+				var succesWrapper = function (data) {
+					if ($('#connection-error-dialog').closest('.ui-dialog').css('display') != 'none') {
+						$('#connection-error-dialog').dialog('close');
+					}
+					
+					if (success != undefined) {
+						success(data);
+					}
+				}
+				
 				if (failure == undefined) {
 					failure = function () {
-						$('#connection-error-dialog').dialog('open');
+						if ($('#connection-error-dialog').closest('.ui-dialog').css('display') == 'none') {
+							$('#connection-error-dialog').dialog('open');
+						}
 					};
 				}
 			
@@ -499,9 +511,12 @@
 			</ul>
 		</div>
 		<div id="connection-error-dialog" title="Connection Error">
-			There was an error in the server connection.
-			<br />
-			Trying again...
+			<p>
+				There was an error in the server connection.
+			</p>
+			<p>
+				Trying again...
+			</p>
 		</div>
 	</body>
 </html>
