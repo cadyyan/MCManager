@@ -16,11 +16,13 @@
 
 package com.theisleoffavalon.mcmanager;
 
+import java.io.File;
 import java.io.IOException;
+
+import net.minecraftforge.common.Configuration;
 
 import com.theisleoffavalon.mcmanager.chatterbox.ChatIntercepter;
 import com.theisleoffavalon.mcmanager.network.WebServer;
-import com.theisleoffavalon.mcmanager.proxy.MCManagerClientProxy;
 import com.theisleoffavalon.mcmanager.proxy.MCManagerProxy;
 import com.theisleoffavalon.mcmanager.util.LogHelper;
 
@@ -60,6 +62,16 @@ public class MCManager
 	public static MCManagerProxy proxy;
 	
 	/**
+	 * The mod config directory.
+	 */
+	private File configDir;
+	
+	/**
+	 * The main mod configuration.
+	 */
+	private Configuration coreConfig;
+	
+	/**
 	 * The web server instance.
 	 */
 	private WebServer webServer;
@@ -78,7 +90,7 @@ public class MCManager
 	 * Called when the mod is in the pre-initialization phase.
 	 * 
 	 * @param event - the event information
-	 * @throws IOException thrown when the web server can't start
+	 * @throws IOException thrown on one of the many IO errors
 	 */
 	@PreInit
 	public void preInit(FMLPreInitializationEvent event) throws IOException
@@ -87,6 +99,12 @@ public class MCManager
 		
 		//if(proxy instanceof MCManagerClientProxy)
 		//	throw new RuntimeException("This is a server-side only mod.");
+		
+		configDir = new File(event.getSuggestedConfigurationFile().getParent() + "/MCManager");
+		if(!configDir.exists())
+			configDir.mkdir();
+		
+		coreConfig = new Configuration(new File(configDir, "MCManager.cfg"));
 	}
 	
 	/**
@@ -100,7 +118,7 @@ public class MCManager
 	{
 		LogHelper.info("Initializing...");
 		
-		webServer = new WebServer();
+		webServer = new WebServer(coreConfig);
 		serverMonitor = new ServerMonitor();
 		chatIntercepter = new ChatIntercepter();
 	}
@@ -118,6 +136,8 @@ public class MCManager
 		webServer.getRpcHandler().addHandler(serverMonitor);
 		
 		NetworkRegistry.instance().registerChatListener(chatIntercepter);
+		
+		coreConfig.save();
 		
 		LogHelper.info("Finished initializing!");
 	}
@@ -146,4 +166,24 @@ public class MCManager
     {
 		return chatIntercepter;
     }
+	
+	/**
+	 * Gets the configuration directory for the mod.
+	 * 
+	 * @return the configuration directory
+	 */
+	public File getConfigDir()
+	{
+		return configDir;
+	}
+	
+	/**
+	 * Gets the core config for the mod.
+	 * 
+	 * @return the core configuration
+	 */
+	public Configuration getCoreConfig()
+	{
+		return coreConfig;
+	}
 }

@@ -17,10 +17,16 @@
 package com.theisleoffavalon.mcmanager.network;
 
 import java.io.IOException;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+
+import net.minecraftforge.common.Configuration;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.util.thread.ExecutorThreadPool;
+import org.eclipse.jetty.util.thread.ThreadPool;
 
 import com.theisleoffavalon.mcmanager.network.handler.JsonRpcHandler;
 import com.theisleoffavalon.mcmanager.network.handler.RegExContextHandler;
@@ -66,17 +72,26 @@ public class WebServer
 	 * Creates an instance of the web server but does not actually start
 	 * it. To start it you must call the {@link start} method.
 	 * 
+	 * @param config - the mod's core config
+	 * 
 	 * @throws IOException thrown when the web socket could not be created and bound
 	 */
-	public WebServer() throws IOException
+	public WebServer(Configuration config) throws IOException
 	{
 		// TODO: set this up to use HTTPS instead when requested
-		// TODO: change the port value to be a configuration setting
-		webServer = new Server(1716);
+		webServer = new Server(config.get("webserver", "port", 1716).getInt());
 		webServer.setGracefulShutdown(STOP_WAIT_TIME);
 		
-		// TODO: change the number of threads to be a configuration setting
-		webServer.setThreadPool(null);
+		int maxConnections = config.get("webserver", "max-sessions", 20).getInt();
+		if(maxConnections < 2)
+		{
+			LogHelper.warning("The selected number of minimum connections allowed is too low. Using low default instead.");
+			maxConnections = 2;
+		}
+		
+		LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>(maxConnections);
+		ThreadPool tp = new ExecutorThreadPool(2, maxConnections, 60, TimeUnit.SECONDS, queue);
+		webServer.setThreadPool(tp);
 		
 		handlers = new RegExContextHandlerCollection();
 		webServer.setHandler(handlers);
