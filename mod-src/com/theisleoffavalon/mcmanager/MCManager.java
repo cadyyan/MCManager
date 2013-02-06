@@ -16,9 +16,12 @@
 
 package com.theisleoffavalon.mcmanager;
 
+import java.io.File;
 import java.io.IOException;
 
-import com.theisleoffavalon.mcmanager.chatterbox.ChatInterceptor;
+import net.minecraftforge.common.Configuration;
+
+import com.theisleoffavalon.mcmanager.chatterbox.ChatIntercepter;
 import com.theisleoffavalon.mcmanager.network.WebServer;
 import com.theisleoffavalon.mcmanager.proxy.MCManagerProxy;
 import com.theisleoffavalon.mcmanager.util.LogHelper;
@@ -34,6 +37,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStoppedEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
 
 /**
  * The main class for the Forge mod.
@@ -58,27 +62,49 @@ public class MCManager
 	public static MCManagerProxy proxy;
 	
 	/**
+	 * The mod config directory.
+	 */
+	private File configDir;
+	
+	/**
+	 * The main mod configuration.
+	 */
+	private Configuration coreConfig;
+	
+	/**
 	 * The web server instance.
 	 */
 	private WebServer webServer;
 	
 	/**
+	 * The server monitor.
+	 */
+	private ServerMonitor serverMonitor;
+	
+	/**
 	 * The ChatInterceptor
 	 */
-	private ChatInterceptor chatInterceptor;
+	private ChatIntercepter chatIntercepter;
 	
 	/**
 	 * Called when the mod is in the pre-initialization phase.
 	 * 
 	 * @param event - the event information
-	 * @throws IOException thrown when the web server can't start
+	 * @throws IOException thrown on one of the many IO errors
 	 */
 	@PreInit
 	public void preInit(FMLPreInitializationEvent event) throws IOException
 	{
 		LogHelper.info("Pre-initializing...");
 		
-		// TODO: pre-init
+		//if(proxy instanceof MCManagerClientProxy)
+		//	throw new RuntimeException("This is a server-side only mod.");
+		
+		configDir = new File(event.getSuggestedConfigurationFile().getParent() + "/MCManager");
+		if(!configDir.exists())
+			configDir.mkdir();
+		
+		coreConfig = new Configuration(new File(configDir, "MCManager.cfg"));
 	}
 	
 	/**
@@ -92,10 +118,9 @@ public class MCManager
 	{
 		LogHelper.info("Initializing...");
 		
-		webServer = proxy.createWebServer();
-		chatInterceptor = new ChatInterceptor();
-		if(webServer == null)
-			LogHelper.warning("Could not create the web server. Is this a client? If so this is a server mod only.");
+		webServer = new WebServer(coreConfig);
+		serverMonitor = new ServerMonitor();
+		chatIntercepter = new ChatIntercepter();
 	}
 	
 	/**
@@ -106,8 +131,13 @@ public class MCManager
 	@PostInit
 	public void postInit(FMLPostInitializationEvent event)
 	{
-		if(webServer != null)
-			webServer.startServer();
+		webServer.startServer();
+		
+		webServer.getRpcHandler().addHandler(serverMonitor);
+		
+		NetworkRegistry.instance().registerChatListener(chatIntercepter);
+		
+		coreConfig.save();
 		
 		LogHelper.info("Finished initializing!");
 	}
@@ -122,20 +152,38 @@ public class MCManager
 	{
 		LogHelper.info("Stopping MCManager...");
 		
-		if(webServer != null)
-			webServer.stopServer();
+		webServer.stopServer();
 		
 		LogHelper.info("MCManager stopped.");
 	}
 	
 	/**
-	 * Returns an instance of a ChatInterceptor
+	 * Returns an instance of a ChatIntercepter
 	 * 
-	 * @return the chat interceptor instance
+	 * @return the chat intercepter instance
 	 */
-	public ChatInterceptor getChatInterceptor()
+	public ChatIntercepter getChatIntercepter()
     {
-		return chatInterceptor;
+		return chatIntercepter;
     }
 	
+	/**
+	 * Gets the configuration directory for the mod.
+	 * 
+	 * @return the configuration directory
+	 */
+	public File getConfigDir()
+	{
+		return configDir;
+	}
+	
+	/**
+	 * Gets the core config for the mod.
+	 * 
+	 * @return the core configuration
+	 */
+	public Configuration getCoreConfig()
+	{
+		return coreConfig;
+	}
 }

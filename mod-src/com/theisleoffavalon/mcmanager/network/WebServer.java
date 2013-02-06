@@ -17,15 +17,21 @@
 package com.theisleoffavalon.mcmanager.network;
 
 import java.io.IOException;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
+import net.minecraftforge.common.Configuration;
+
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.util.thread.ExecutorThreadPool;
+import org.eclipse.jetty.util.thread.ThreadPool;
 
-import com.theisleoffavalon.mcmanager.network.handler.HtmlWebRequestHandler;
-import com.theisleoffavalon.mcmanager.network.handler.IWebRequestHandler;
-import com.theisleoffavalon.mcmanager.network.handler.impl.RootWebHandler;
+import com.theisleoffavalon.mcmanager.network.handler.JsonRpcHandler;
+import com.theisleoffavalon.mcmanager.network.handler.RegExContextHandler;
+import com.theisleoffavalon.mcmanager.network.handler.RegExContextHandlerCollection;
+import com.theisleoffavalon.mcmanager.network.handler.RootHttpHandler;
 import com.theisleoffavalon.mcmanager.util.LogHelper;
 
 /**
@@ -55,29 +61,46 @@ public class WebServer
 	/**
 	 * The handler for the root context.
 	 */
-	private HtmlWebRequestHandler rootHandler;
+	private Handler rootHandler;
+	
+	/**
+	 * The JSON RPC handler.
+	 */
+	private Handler rpcHandler;
 	
 	/**
 	 * Creates an instance of the web server but does not actually start
 	 * it. To start it you must call the {@link start} method.
 	 * 
+	 * @param config - the mod's core config
+	 * 
 	 * @throws IOException thrown when the web socket could not be created and bound
 	 */
-	public WebServer() throws IOException
+	public WebServer(Configuration config) throws IOException
 	{
 		// TODO: set this up to use HTTPS instead when requested
-		// TODO: change the port value to be a configuration setting
-		webServer = new Server(1716);
+		webServer = new Server(config.get("webserver", "port", 1716).getInt());
 		webServer.setGracefulShutdown(STOP_WAIT_TIME);
 		
-		// TODO: change the number of threads to be a configuration setting
-		webServer.setThreadPool(null);
+		int maxConnections = config.get("webserver", "max-sessions", 20).getInt();
+		if(maxConnections < 2)
+		{
+			LogHelper.warning("The selected number of minimum connections allowed is too low. Using low default instead.");
+			maxConnections = 2;
+		}
 		
-		handlers = new ContextHandlerCollection();
+		LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>(maxConnections);
+		ThreadPool tp = new ExecutorThreadPool(2, maxConnections, 60, TimeUnit.SECONDS, queue);
+		webServer.setThreadPool(tp);
+		
+		handlers = new RegExContextHandlerCollection();
 		webServer.setHandler(handlers);
 		
-		rootHandler = new RootWebHandler();
+		rootHandler = new RootHttpHandler();
 		addHandler("/", rootHandler);
+		
+		rpcHandler = new JsonRpcHandler();
+		addHandler("/rpc/*", rpcHandler);
 	}
 	
 	/**
@@ -119,12 +142,20 @@ public class WebServer
 	 * @param context - the web context this handler listens on
 	 * @param handler - the request handler
 	 */
-	public void addHandler(String context, IWebRequestHandler handler)
+	public void addHandler(String context, Handler handler)
 	{
-		ContextHandler wrapper = new ContextHandler();
-		wrapper.setContextPath(context);
-		wrapper.setHandler(handler);
+		RegExContextHandler wrapper = new RegExContextHandler(context, handler);
 		
 		handlers.addHandler(wrapper);
+	}
+	
+	/**
+	 * Gets the JSON RPC handler.
+	 * 
+	 * @return the JSON RPC handler
+	 */
+	public JsonRpcHandler getRpcHandler()
+	{
+		return (JsonRpcHandler)rpcHandler;
 	}
 }

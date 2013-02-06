@@ -113,6 +113,30 @@
 				padding: 2px 0.5em;
 			}
 			
+			#server-info div.section
+			{
+				display: inline-block;
+				margin-bottom: 0px;
+				text-align: center;
+			}
+			
+			#player-list ul
+			{
+				list-style: none;
+				margin: 0px;
+				padding: 0px;
+			}
+			
+			#player-list ul li
+			{
+				padding: 4px 8px;
+			}
+			
+			#player-list ul li:not(:last-child)
+			{
+				border-bottom: 1px solid #AAA;
+			}
+			
 			#content div[name=console] div.section ul
 			{
 				list-style: none;
@@ -213,6 +237,12 @@
 				
 				$('#content th').addClass('ui-widget-header');
 				
+				$('#server-controls button').button();
+				$('#stop-server').click(function () {
+					// TODO: add confirmation dialog
+					RpcAjaxRequest('stopServer');
+				});
+				
 				$('#command-send').button();
 				
 				$('#settings').button({
@@ -226,11 +256,18 @@
 				
 				$('#settings-dialog').dialog({
 					autoOpen: false,
-					minHeight: 'auto'
+					minHeight: 'auto',
+					modal: true
 				});
 				
 				$('#settings-dialog ul li a').button();
 				$('#disconnect').button('disable');
+				
+				$('#connection-error-dialog').dialog({
+					autoOpen: false,
+					minHeight: 'auto',
+					modal: true
+				}).siblings('.ui-dialog-titlebar').children('button').remove();
 				
 				$(window).resize(function () {
 					$('#content').height($(window).height() - $('#header').outerHeight(true)
@@ -241,6 +278,9 @@
 					var console = $('#console');
 					console.height($('#content').height() - 150);
 				}).resize();
+				
+				update();
+				setInterval(update, 1000);
 			});
 			
 			function Tab(name, body) {
@@ -273,6 +313,122 @@
 				var body = $('#content div[name=' + tabAnchor.attr('body') + ']');
 				body.addClass('selected');
 			}
+			
+			function GUID() {
+				var guid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+							var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+							return v.toString(16);
+						});
+				
+				return guid;
+			}
+			
+			function RpcRequest(method, params) {
+				var json = {
+					jsonrpc: '2.0',
+					method: method,
+					params: params,
+					id: GUID()
+				};
+				
+				return JSON.stringify(json);
+			}
+			
+			function RpcAjaxRequest(method, params, success, failure) {
+				if (params == undefined) {
+					params = {};
+				}
+				
+				var succesWrapper = function (data) {
+					if ($('#connection-error-dialog').closest('.ui-dialog').css('display') != 'none') {
+						$('#connection-error-dialog').dialog('close');
+					}
+					
+					if (success != undefined) {
+						success(data);
+					}
+				}
+				
+				if (failure == undefined) {
+					failure = function () {
+						if ($('#connection-error-dialog').closest('.ui-dialog').css('display') == 'none') {
+							$('#connection-error-dialog').dialog('open');
+						}
+					};
+				}
+			
+				$.ajax({
+					url: '/rpc',
+					type: 'POST',
+					contentType: 'application/json; charset=utf-8',
+					data: RpcRequest(method, params),
+					dataType: 'json',
+					success: success,
+					error: failure
+				});
+			}
+			
+			function update() {
+				updateInfo();
+			}
+			
+			function updateInfo() {
+				RpcAjaxRequest('systemInfo', {}, function (data) {
+					$('#info-uptime').html(formatTime(data.params.uptime));
+					$('#info-usedmemory').html(formatMemory(data.params.usedMemory));
+					$('#info-maxmemory').html(formatMemory(data.params.maxMemory));
+					
+					var playerList = $('#player-list ul');
+					playerList.children().remove();
+					var players = data.params.players;
+					for (var i = 0; i != players.length; i++) {
+						var player = players[i];
+						playerList.append($('<li>').append(player));
+					}
+				});
+			}
+			
+			function formatTime(milliseconds) {
+				function pad(value, zeroes) {
+					if (zeroes == undefined) {
+						zeroes = 2;
+					}
+					
+					var ret = '';
+					var digits = (value == 0 ? 0 : Math.floor(Math.log(value) / Math.LN10)) + 1;
+					
+					for (var i = digits; i != zeroes; i++) {
+						ret += '0';
+					}
+					
+					return ret + value;
+				}
+			
+				var days = Math.floor(milliseconds / (1000 * 60 * 60 * 24));
+				milliseconds -= days * 1000 * 60 * 60 * 24;
+				
+				var hours = Math.floor(milliseconds / (1000 * 60 * 60));
+				milliseconds -= hours * 1000 * 60 * 60;
+				
+				var minutes = Math.floor(milliseconds / (1000 * 60));
+				milliseconds -= minutes * 1000 * 60;
+				
+				var seconds = Math.floor(milliseconds / 1000);
+				milliseconds -= seconds * 1000;
+				
+				var format = days > 0 ? (days + ' days ') : '';
+				format += pad(hours) + ':' + pad(minutes) + ':' + pad(seconds) + ':' + pad(milliseconds, 3);
+				
+				return format;
+			}
+			
+			function formatMemory(bytes) {
+				var gigabytes = bytes / (1024 * 1024 * 1024);
+				if (gigabytes >= 1) {
+					var format = Math.round(gigabytes * 100) / 100 + ' GB';
+					return format;
+				}
+			}
 		</script>
 	
 		<div id="header" class="ui-widget ui-widget-header ui-corner-top">
@@ -284,8 +440,23 @@
 		</nav>
 		<div id="content" class="ui-widget ui-widget-content">
 			<div name="info">
-				<div class="section" title="Server Info">
-					<label>Uptime: </label><span>Forever</span>
+				<div id="server-info" class="section" title="Server Info">
+				    <div class="section" title="Uptime">
+					   <span id="info-uptime">Offline</span>
+					</div>
+					<div class="section" title="Used Memory">
+					   <span id="info-usedmemory">0 bytes</span>
+					</div>
+					<div class="section" title="Maximum Memory">
+					   <span id="info-maxmemory">0 bytes</span>
+					</div>
+				</div>
+				<div id="server-controls" class="section" title="Controls">
+					<button id="stop-server">Stop</button>
+				</div>
+				<div id="player-list" class="section" title="Connected Players">
+					<ul>
+					</ul>
 				</div>
 			</div>
 			<div name="console">
@@ -338,6 +509,14 @@
 				<li><a id="select-profile">Select Profile</a></li>
 				<li><a id="disconnect">Disconnect</a></li>
 			</ul>
+		</div>
+		<div id="connection-error-dialog" title="Connection Error">
+			<p>
+				There was an error in the server connection.
+			</p>
+			<p>
+				Trying again...
+			</p>
 		</div>
 	</body>
 </html>

@@ -18,6 +18,7 @@ package com.theisleoffavalon.mcmanager.proxy;
 
 import java.io.IOException;
 
+import com.theisleoffavalon.mcmanager.chatterbox.ChatIntercepter;
 import com.theisleoffavalon.mcmanager.network.WebServer;
 
 /**
@@ -28,13 +29,4 @@ import com.theisleoffavalon.mcmanager.network.WebServer;
  */
 public class MCManagerServerProxy extends MCManagerProxy
 {
-	/*
-	 * (non-Javadoc)
-	 * @see com.theisleoffavalon.mcmanager.proxy.MCManagerProxy#createWebServer()
-	 */
-	@Override
-	public WebServer createWebServer() throws IOException
-	{
-		return new WebServer();
-	}
 }

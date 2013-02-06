@@ -18,6 +18,7 @@ package com.theisleoffavalon.mcmanager.proxy;
 
 import java.io.IOException;
 
+import com.theisleoffavalon.mcmanager.chatterbox.ChatIntercepter;
 import com.theisleoffavalon.mcmanager.network.WebServer;
 
 /**
@@ -32,14 +33,4 @@ import com.theisleoffavalon.mcmanager.network.WebServer;
  */
 public abstract class MCManagerProxy
 {
-	/**
-	 * Creates an instance of a web server. This should be done server side only.
-	 * 
-	 * @return a web server instance or null if this is the client
-	 * @throws IOException thrown when a network error prevents instantiation
-	 */
-	public WebServer createWebServer() throws IOException
-	{
-		return null;
-	}
 }
