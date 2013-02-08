@@ -110,14 +110,19 @@ public abstract class RpcRequestResponse implements JSONAware, JSONStreamAware
 	}
 	
 	/**
-	 * Gets a parameter from the request/response.
+	 * Gets a parameter from the request/response. If
+	 * the parameter does not exist then <code>null</code>
+	 * is returned.
 	 * 
 	 * @param parameterName - the parameter name
 	 * @return a parameter value
 	 */
 	public Object getParameter(String parameterName)
 	{
-		return params.get(parameterName);
+		if(params.containsKey(parameterName))
+			return params.get(parameterName);
+		else
+			return null;
 	}
 	
 	/**

@@ -17,6 +17,7 @@
 package com.theisleoffavalon.mcmanager.network.handler;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
@@ -118,13 +119,19 @@ public class JsonRpcHandler extends AbstractHandler
 		
 		try
 		{
-			rawRpcRequest = parser.parse(new InputStreamReader(request.getInputStream()));
+			InputStream stream = request.getInputStream();
+			byte buf[] = new byte[stream.available()];
+			stream.read(buf);
+			String json = new String(buf);
+			//rawRpcRequest = parser.parse(new InputStreamReader(request.getInputStream()));
+			rawRpcRequest = parser.parse(json);
 		}
 		catch(ParseException e)
 		{
 			LogHelper.warning("Received RPC request that contained invalid JSON.");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			baseRequest.setHandled(true);
+			parser.reset();
 			return;
 		}
 		
@@ -269,7 +276,7 @@ public class JsonRpcHandler extends AbstractHandler
 			}
 			catch(IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
 			{
-				LogHelper.warning("Failure when handling RPC request.");
+				LogHelper.warning("Failure when handling RPC request.\n" + e.getMessage());
 				
 				if(rpcResponse != null)
 					rpcResponse.setError(new Error(ErrorCode.INTERNAL_ERROR, "An error occured when processing the request.", null));

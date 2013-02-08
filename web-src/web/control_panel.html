@@ -137,20 +137,21 @@
 				border-bottom: 1px solid #AAA;
 			}
 			
-			#content div[name=console] div.section ul
+			#console
 			{
 				list-style: none;
 				margin: 0px;
+				overflow: auto;
 				padding: 0px;
 			}
 			
-			#content div[name=console] div.section ul li
+			#console li
 			{
 				border-bottom: 1px solid #AAA;
 				padding: 4px 6px;
 			}
 			
-			#content div[name=console] div.section ul li:last-child
+			#console li:last-child
 			{
 				border-bottom: none;
 			}
@@ -280,7 +281,7 @@
 				}).resize();
 				
 				update();
-				setInterval(update, 1000);
+				setInterval(update, 5000);
 			});
 			
 			function Tab(name, body) {
@@ -370,6 +371,7 @@
 			
 			function update() {
 				updateInfo();
+				updateConsole();
 			}
 			
 			function updateInfo() {
@@ -384,6 +386,25 @@
 					for (var i = 0; i != players.length; i++) {
 						var player = players[i];
 						playerList.append($('<li>').append(player));
+					}
+				});
+			}
+			
+			function updateConsole() {
+				var params = {};
+				var last = $('#console li:last-child');
+				if (last.length != 0) {
+					params = { from: parseInt(last.attr('message')) };
+				}
+			
+				RpcAjaxRequest('consoleMessages', params, function (data) {
+					var messages = data.params.messages;
+					var console = $('#console');
+					
+					for (var i = 0; i != messages.length; i++) {
+						var message = messages[i];
+						
+						console.append($('<li>').attr('message', message.id).html(message.message));
 					}
 				});
 			}
@@ -462,8 +483,6 @@
 			<div name="console">
 				<div class="section" title="Console Output">
 					<ul id="console">
-						<li>Cadyyan says hi!</li>
-						<li>Server says hi!</hi>
 					</ul>
 				</div>
 				<div class="section" title="Command">

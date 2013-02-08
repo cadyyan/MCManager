@@ -16,10 +16,6 @@
 
 package com.theisleoffavalon.mcmanager.proxy;
 
-import java.io.IOException;
-
-import com.theisleoffavalon.mcmanager.chatterbox.ChatIntercepter;
-import com.theisleoffavalon.mcmanager.network.WebServer;
 
 /**
  * A proxy class that hides the details of the client and server implementations of common
