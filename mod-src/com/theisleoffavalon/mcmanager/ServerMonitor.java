@@ -38,6 +38,16 @@ public class ServerMonitor
 	}
 	
 	/**
+	 * Gets the server hostname.
+	 * 
+	 * @return the hostname
+	 */
+	public String getHostname()
+	{
+		return server.getHostname();
+	}
+	
+	/**
 	 * Gets the up time of the server.
 	 * 
 	 * @return the up time in milliseconds
@@ -86,6 +96,7 @@ public class ServerMonitor
 	@RpcMethod(method = "systemInfo", description = "Gets information about the server.")
 	public void getSystemInfo(RpcRequest request, RpcResponse response)
 	{
+		response.addParameter("hostname", getHostname());
 		response.addParameter("uptime", getUpTime());
 		response.addParameter("usedMemory", getUsedMemory());
 		response.addParameter("maxMemory", getMaxAllocatedMemory());
