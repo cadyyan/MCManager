@@ -21,7 +21,6 @@ import java.io.IOException;
 
 import net.minecraftforge.common.Configuration;
 
-import com.theisleoffavalon.mcmanager.chatterbox.ChatIntercepter;
 import com.theisleoffavalon.mcmanager.network.WebServer;
 import com.theisleoffavalon.mcmanager.proxy.MCManagerProxy;
 import com.theisleoffavalon.mcmanager.util.LogHelper;
@@ -37,7 +36,6 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStoppedEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
 
 /**
  * The main class for the Forge mod.
@@ -82,9 +80,9 @@ public class MCManager
 	private ServerMonitor serverMonitor;
 	
 	/**
-	 * The ChatInterceptor
+	 * The chat monitor.
 	 */
-	private ChatIntercepter chatIntercepter;
+	private ConsoleMonitor consoleMonitor;
 	
 	/**
 	 * Called when the mod is in the pre-initialization phase.
@@ -97,6 +95,7 @@ public class MCManager
 	{
 		LogHelper.info("Pre-initializing...");
 		
+		// TODO: find a way to make this not work client side.
 		//if(proxy instanceof MCManagerClientProxy)
 		//	throw new RuntimeException("This is a server-side only mod.");
 		
@@ -120,7 +119,7 @@ public class MCManager
 		
 		webServer = new WebServer(coreConfig);
 		serverMonitor = new ServerMonitor();
-		chatIntercepter = new ChatIntercepter();
+		consoleMonitor = new ConsoleMonitor();;
 	}
 	
 	/**
@@ -131,11 +130,11 @@ public class MCManager
 	@PostInit
 	public void postInit(FMLPostInitializationEvent event)
 	{
+		consoleMonitor.startLogging();
+		
 		webServer.startServer();
-		
 		webServer.getRpcHandler().addHandler(serverMonitor);
-		
-		NetworkRegistry.instance().registerChatListener(chatIntercepter);
+		webServer.getRpcHandler().addHandler(consoleMonitor);
 		
 		coreConfig.save();
 		
@@ -153,19 +152,10 @@ public class MCManager
 		LogHelper.info("Stopping MCManager...");
 		
 		webServer.stopServer();
+		consoleMonitor.stopLogging();
 		
 		LogHelper.info("MCManager stopped.");
 	}
-	
-	/**
-	 * Returns an instance of a ChatIntercepter
-	 * 
-	 * @return the chat intercepter instance
-	 */
-	public ChatIntercepter getChatIntercepter()
-    {
-		return chatIntercepter;
-    }
 	
 	/**
 	 * Gets the configuration directory for the mod.
