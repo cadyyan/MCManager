@@ -149,7 +149,7 @@ public class MCManager
 		
 		LogHelper.info("Finished initializing!");
 		
-		MinecraftServer.getServer().getCommandManager().getCommands();
+		//MinecraftServer.getServer().getCommandManager().getCommands();
 	}
 	
 	/**

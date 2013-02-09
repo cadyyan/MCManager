@@ -384,7 +384,7 @@
 					var playerList = $('#player-list ul');
 					playerList.children().remove();
 					var players = data.result.players;
-					for (var i = 0; i != result.length; i++) {
+					for (var i = 0; i != players.length; i++) {
 						var player = players[i];
 						playerList.append($('<li>').append(player));
 					}
@@ -463,6 +463,20 @@
 					var format = Math.round(gigabytes * 100) / 100 + ' GB';
 					return format;
 				}
+				
+				var megabytes = bytes / (1024 * 1024);
+				if (megabytes >= 1) {
+					var format = Math.round(megabytes * 100) / 100 + ' MB';
+					return format;
+				}
+				
+				var kilobytes = bytes / (1024);
+				if (kilobytes >= 1) {
+					var format = Math.round(kilobytes * 100) / 100 + ' KB';
+					return format;
+				}
+				
+				return bytes + ' bytes';
 			}
 		</script>
 	
