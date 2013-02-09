@@ -123,7 +123,6 @@ public class JsonRpcHandler extends AbstractHandler
 			byte buf[] = new byte[stream.available()];
 			stream.read(buf);
 			String json = new String(buf);
-			//rawRpcRequest = parser.parse(new InputStreamReader(request.getInputStream()));
 			rawRpcRequest = parser.parse(json);
 		}
 		catch(ParseException e)

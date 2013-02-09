@@ -218,8 +218,6 @@
 		</style>
 		
 		<script type="text/javascript">
-			var RPC_URL = '/rpc';
-		
 			$(document).ready(function () {
 				$('nav ul').append(new Tab('Info', 'info'))
 						   .append(new Tab('Console', 'console'))
@@ -411,9 +409,9 @@
 			}
 			
 			function updateCommands() {
-				RpcRequest('getAllCommands', {}, function (data) {
+				RpcAjaxRequest('getAllCommands', {}, function (data) {
 					var select = $('#command-select');
-					selet.children().remove();
+					select.children().remove();
 					
 					var commands = data.result.commands;
 					for (var i = 0; i != commands.length; i++) {
