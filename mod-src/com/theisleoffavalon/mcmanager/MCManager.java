@@ -18,7 +18,9 @@ package com.theisleoffavalon.mcmanager;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.Configuration;
 
 import com.theisleoffavalon.mcmanager.network.WebServer;
@@ -85,6 +87,11 @@ public class MCManager
 	private ConsoleMonitor consoleMonitor;
 	
 	/**
+	 * The command manager.
+	 */
+	private CommandManager commandManager;
+	
+	/**
 	 * Called when the mod is in the pre-initialization phase.
 	 * 
 	 * @param event - the event information
@@ -119,7 +126,8 @@ public class MCManager
 		
 		webServer = new WebServer(coreConfig);
 		serverMonitor = new ServerMonitor();
-		consoleMonitor = new ConsoleMonitor();;
+		consoleMonitor = new ConsoleMonitor();
+		commandManager = new CommandManager();
 	}
 	
 	/**
@@ -135,10 +143,13 @@ public class MCManager
 		webServer.startServer();
 		webServer.getRpcHandler().addHandler(serverMonitor);
 		webServer.getRpcHandler().addHandler(consoleMonitor);
+		webServer.getRpcHandler().addHandler(commandManager);
 		
 		coreConfig.save();
 		
 		LogHelper.info("Finished initializing!");
+		
+		MinecraftServer.getServer().getCommandManager().getCommands();
 	}
 	
 	/**

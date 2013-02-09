@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Handler;
+import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
@@ -44,6 +45,7 @@ public class ConsoleMonitor extends Handler
 	public ConsoleMonitor()
 	{
 		this.fmlLogger = Logger.getLogger("ForgeModLoader");
+		
 		this.nextLogID = 0;
 		this.records = new ArrayList<LogRecord>();
 	}

@@ -281,6 +281,7 @@
 				}).resize();
 				
 				update();
+				updateCommands();
 				setInterval(update, 5000);
 			});
 			
@@ -376,14 +377,14 @@
 			
 			function updateInfo() {
 				RpcAjaxRequest('systemInfo', {}, function (data) {
-					$('#info-uptime').html(formatTime(data.params.uptime));
-					$('#info-usedmemory').html(formatMemory(data.params.usedMemory));
-					$('#info-maxmemory').html(formatMemory(data.params.maxMemory));
+					$('#info-uptime').html(formatTime(data.result.uptime));
+					$('#info-usedmemory').html(formatMemory(data.result.usedMemory));
+					$('#info-maxmemory').html(formatMemory(data.result.maxMemory));
 					
 					var playerList = $('#player-list ul');
 					playerList.children().remove();
-					var players = data.params.players;
-					for (var i = 0; i != players.length; i++) {
+					var players = data.result.players;
+					for (var i = 0; i != result.length; i++) {
 						var player = players[i];
 						playerList.append($('<li>').append(player));
 					}
@@ -398,13 +399,26 @@
 				}
 			
 				RpcAjaxRequest('consoleMessages', params, function (data) {
-					var messages = data.params.messages;
+					var messages = data.result.messages;
 					var console = $('#console');
 					
 					for (var i = 0; i != messages.length; i++) {
 						var message = messages[i];
 						
 						console.append($('<li>').attr('message', message.id).html(message.message));
+					}
+				});
+			}
+			
+			function updateCommands() {
+				RpcRequest('getAllCommands', {}, function (data) {
+					var select = $('#command-select');
+					selet.children().remove();
+					
+					var commands = data.result.commands;
+					for (var i = 0; i != commands.length; i++) {
+						var command = commands[i];
+						select.append($('<option>').html(command));
 					}
 				});
 			}
@@ -487,7 +501,6 @@
 				</div>
 				<div class="section" title="Command">
 					<select id="command-select">
-						<option value="give" selected="selected">give</option>
 					</select>
 					<input id="command-args" class="ui-widget ui-state-default ui-corner-all" />
 					<button id="command-send">Send</button>
