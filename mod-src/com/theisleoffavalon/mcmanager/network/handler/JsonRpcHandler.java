@@ -90,11 +90,6 @@ public class JsonRpcHandler extends AbstractHandler
 	}
 	
 	/**
-	 * The parser to use for JSON.
-	 */
-	private JSONParser parser;
-	
-	/**
 	 * The mapping of RPC methods to method handlers.
 	 */
 	private Map<String, MethodHandlerEntry> methodHandlers;
@@ -106,7 +101,6 @@ public class JsonRpcHandler extends AbstractHandler
 	{
 		super();
 		
-		parser = new JSONParser();
 		methodHandlers = new HashMap<String, MethodHandlerEntry>();
 		
 		addHandler(this);
@@ -115,22 +109,23 @@ public class JsonRpcHandler extends AbstractHandler
 	@Override
 	public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
 	{
+		JSONParser parser = new JSONParser();
 		Object rawRpcRequest;
+		String json = "";
 		
 		try
 		{
 			InputStream stream = request.getInputStream();
 			byte buf[] = new byte[stream.available()];
 			stream.read(buf);
-			String json = new String(buf);
+			json = new String(buf);
 			rawRpcRequest = parser.parse(json);
 		}
 		catch(ParseException e)
 		{
-			LogHelper.warning("Received RPC request that contained invalid JSON.");
+			LogHelper.warning("Received RPC request that contained invalid JSON.\n" + json);
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			baseRequest.setHandled(true);
-			parser.reset();
 			return;
 		}
 		
