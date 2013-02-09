@@ -160,6 +160,6 @@ public class ConsoleMonitor extends Handler
 			}
 		}
 		
-		response.addParameter("messages", messages);
+		response.addResult("messages", messages);
 	}
 }

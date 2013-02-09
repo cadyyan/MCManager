@@ -268,19 +268,19 @@ public class RpcResponse implements JSONAware, JSONStreamAware
 	}
 	
 	/**
-	 * Adds a parameter to the request/response.
+	 * Adds a result to the request/response.
 	 * 
-	 * @param parameterName - the name of the parameter
-	 * @param parameterValue - the value of the parameter
+	 * @param resultName - the name of the result
+	 * @param resultValue - the value of the result
 	 */
-	public void addParameter(String parameterName, Object parameterValue)
+	public void addResult(String resultName, Object resultValue)
 	{
-		if(parameterName == null)
-			throw new NullPointerException("JSON RPC parameter names cannot be null.");
-		else if(parameterName.isEmpty())
-			throw new InvalidParameterException("JSON RPC parameter names cannot be empty strings.");
+		if(resultName == null)
+			throw new NullPointerException("JSON RPC result names cannot be null.");
+		else if(resultName.isEmpty())
+			throw new InvalidParameterException("JSON RPC result names cannot be empty strings.");
 		
-		result.put(parameterName, parameterValue);
+		result.put(resultName, resultValue);
 	}
 	
 	/**

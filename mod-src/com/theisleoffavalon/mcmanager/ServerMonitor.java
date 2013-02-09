@@ -96,11 +96,11 @@ public class ServerMonitor
 	@RpcMethod(method = "systemInfo", description = "Gets information about the server.")
 	public void getSystemInfo(RpcRequest request, RpcResponse response)
 	{
-		response.addParameter("hostname", getHostname());
-		response.addParameter("uptime", getUpTime());
-		response.addParameter("usedMemory", getUsedMemory());
-		response.addParameter("maxMemory", getMaxAllocatedMemory());
-		response.addParameter("players", getAllOnlinePlayers());
+		response.addResult("hostname", getHostname());
+		response.addResult("uptime", getUpTime());
+		response.addResult("usedMemory", getUsedMemory());
+		response.addResult("maxMemory", getMaxAllocatedMemory());
+		response.addResult("players", getAllOnlinePlayers());
 	}
 	
 	/**

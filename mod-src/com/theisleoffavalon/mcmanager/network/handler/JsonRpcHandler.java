@@ -231,7 +231,7 @@ public class JsonRpcHandler extends AbstractHandler
 		JSONArray array = new JSONArray();
 		
 		array.addAll(methods);
-		response.addParameter("methods", array);
+		response.addResult("methods", array);
 	}
 	
 	/**
