@@ -414,8 +414,7 @@
 					select.children().remove();
 					
 					var commands = data.result.commands;
-					for (var i = 0; i != commands.length; i++) {
-						var command = commands[i];
+					for (var command in commands) {
 						select.append($('<option>').html(command));
 					}
 				});
