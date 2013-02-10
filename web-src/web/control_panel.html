@@ -172,6 +172,7 @@
 			#command-args
 			{
 				height: 36px;
+				padding: 1px 6px;
 				top: 2px;
 			}
 			
@@ -242,7 +243,13 @@
 					RpcAjaxRequest('stopServer');
 				});
 				
-				$('#command-send').button();
+				$('#command-send').button().click(function () {
+					var command = $('#command-select').val();
+					var args = [$('#command-args').val()];
+				
+					RpcAjaxRequest('command', {'command': command, 'args': args}, function (data) {
+					});
+				});
 				
 				$('#settings').button({
 					icons: {
@@ -340,7 +347,7 @@
 					params = {};
 				}
 				
-				var succesWrapper = function (data) {
+				var successWrapper = function (data) {
 					if ($('#connection-error-dialog').closest('.ui-dialog').css('display') != 'none') {
 						$('#connection-error-dialog').dialog('close');
 					}
@@ -364,7 +371,7 @@
 					contentType: 'application/json; charset=utf-8',
 					data: RpcRequest(method, params),
 					dataType: 'json',
-					success: success,
+					success: successWrapper,
 					error: failure
 				});
 			}
@@ -551,8 +558,6 @@
 			</div>
 		</div>
 		<div id="status-bar" class="ui-widget ui-widget-header ui-corner-bottom">
-			<label>Connected to:</label>
-			<span id="server-connection">Nothing</span>
 			<a id="settings">Settings</a>
 		</div>
 		

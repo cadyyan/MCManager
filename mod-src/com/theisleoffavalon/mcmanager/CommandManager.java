@@ -1,15 +1,22 @@
 package com.theisleoffavalon.mcmanager;
 
+import java.util.List;
 import java.util.Map;
 
 import net.minecraft.command.ICommand;
+import net.minecraft.command.ICommandManager;
+import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.StringTranslate;
+import net.minecraft.util.StringUtils;
 
 import org.json.simple.JSONObject;
 
 import com.theisleoffavalon.mcmanager.network.handler.jsonrpc.RpcMethod;
 import com.theisleoffavalon.mcmanager.network.handler.jsonrpc.RpcRequest;
 import com.theisleoffavalon.mcmanager.network.handler.jsonrpc.RpcResponse;
+import com.theisleoffavalon.mcmanager.util.LogHelper;
 
 /**
  * Handles commands for the mod as well as being a source for retrieving
@@ -18,8 +25,21 @@ import com.theisleoffavalon.mcmanager.network.handler.jsonrpc.RpcResponse;
  * @author Cadyyan
  *
  */
-public class CommandManager
+public class CommandManager implements ICommandSender
 {
+	/**
+	 * The server command manager.
+	 */
+	private ICommandManager commandManager;
+	
+	/**
+	 * Creates a new instance of the command manager.
+	 */
+	public CommandManager()
+	{
+		this.commandManager = MinecraftServer.getServer().getCommandManager();
+	}
+	
 	/**
 	 * Gets all the commands available on the server.
 	 * 
@@ -44,5 +64,79 @@ public class CommandManager
 		}
 		
 		response.addResult("commands", commands);
+	}
+	
+	/**
+	 * Handles requests for Minecraft commands sent over RPC.
+	 * 
+	 * @param request - the request
+	 * @param response - the response
+	 */
+	@RpcMethod(method = "command", description = "Handles the client sending a command to the Minecraft server.\n" +
+												 "This method expects the server command to be sent in the \"command\"\n" +
+												 "parameter. The arguments for the command are given as a list of\n" +
+												 "strings in the \"args\" parameter.")
+	public void command(RpcRequest request, RpcResponse response)
+	{
+		String commandName = (String)request.getParameter("command");
+		
+		StringBuilder sb = new StringBuilder();
+		List<String> args = (List<String>)request.getParameter("args");
+		for(String arg : args)
+		{
+			if(sb.length() > 0)
+				sb.append(" ");
+			
+			sb.append(arg);
+		}
+		
+		String commandArgs = sb.toString();
+		
+		String command = commandName + " " + commandArgs;
+		commandManager.executeCommand(this, command);
+	}
+
+	/**
+	 * Gets the name that should show up as the person that issued the
+	 * command.
+	 * 
+	 * @return the command sender name
+	 */
+	@Override
+	public String getCommandSenderName()
+	{
+		return "RPC"; // TODO: this should also eventually include the person who remotely
+					  // TODO: issued the command.
+	}
+
+	@Override
+	public void sendChatToPlayer(String var1)
+	{
+		LogHelper.info(StringUtils.stripControlCodes(var1));
+	}
+
+	@Override
+	public boolean canCommandSenderUseCommand(int var1, String var2)
+	{
+		return true; // TODO: eventually this should probably have some form of
+					 // TODO: check on who the person issuing the remote command
+					 // TODO: is.
+	}
+
+	@Override
+	public String translateString(String var1, Object... var2)
+	{
+		return StringTranslate.getInstance().translateKeyFormat(var1, var2);
+	}
+
+	/**
+	 * Gets the position of the command sender.
+	 * 
+	 * @return the in-game position of the command sender
+	 */
+	@Override
+	public ChunkCoordinates getPlayerCoordinates()
+	{
+		return new ChunkCoordinates(0, 0, 0);
 	}
 }

@@ -148,8 +148,6 @@ public class MCManager
 		coreConfig.save();
 		
 		LogHelper.info("Finished initializing!");
-		
-		//MinecraftServer.getServer().getCommandManager().getCommands();
 	}
 	
 	/**
