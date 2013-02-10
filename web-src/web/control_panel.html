@@ -280,6 +280,7 @@
 				
 				update();
 				updateCommands();
+				updateMods();
 				setInterval(update, 5000);
 			});
 			
@@ -420,6 +421,23 @@
 				});
 			}
 			
+			function updateMods() {
+				RpcAjaxRequest('getMods', {}, function (data) {
+					var modList = $('#mods');
+					var mods = data.result.mods;
+					
+					for (var i = 0; i != mods.length; i++) {
+						var modEntry = mods[i];
+						
+						var mod = $('<tr>');
+						mod.append($('<td>').html(modEntry.name));
+						mod.append($('<td>').html(modEntry.version));
+						
+						modList.append(mod);
+					}
+				});
+			}
+			
 			function formatTime(milliseconds) {
 				function pad(value, zeroes) {
 					if (zeroes == undefined) {
@@ -527,14 +545,6 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>FooCraft</td>
-								<td>1.3.3.7</td>
-							</tr>
-							<tr>
-								<td>BarCraft</td>
-								<td>6.0.0.65</td>
-							</tr>
 						</tbody>
 					</table>
 				</div>
