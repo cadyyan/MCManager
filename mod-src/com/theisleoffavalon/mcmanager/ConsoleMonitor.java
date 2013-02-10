@@ -1,8 +1,11 @@
 package com.theisleoffavalon.mcmanager;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
+import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -24,6 +27,47 @@ import com.theisleoffavalon.mcmanager.network.handler.jsonrpc.RpcResponse;
  */
 public class ConsoleMonitor extends Handler
 {
+	/**
+	 * Formats the log messages. Apparently the ConsoleLogFormatter that's built in
+	 * has to be package level visibility so no one can use it. That's cool. I guess.
+	 * 
+	 * @author Cadyyan
+	 *
+	 */
+	public class LogFormatter extends Formatter
+	{
+		/**
+		 * The date formatter.
+		 */
+		private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		
+		@Override
+		public String format(LogRecord record)
+		{
+			StringBuilder sb = new StringBuilder();
+			
+			sb.append(dateFormatter.format(Long.valueOf(record.getMillis())));
+			
+			Level level = record.getLevel();
+			sb.append(" [");
+			sb.append(level.toString());
+			sb.append("] ");
+			
+			sb.append(record.getMessage());
+			sb.append("\n");
+			
+			Throwable thrown = record.getThrown();
+			if(thrown != null)
+			{
+				StringWriter sw = new StringWriter();
+				thrown.printStackTrace(new PrintWriter(sw));
+				sb.append(sw.toString());
+			}
+			
+			return sb.toString();
+		}
+	}
+	
 	/**
 	 * A sneaky instance of the FML logger.
 	 */
@@ -48,6 +92,7 @@ public class ConsoleMonitor extends Handler
 		
 		this.nextLogID = 0;
 		this.records = new ArrayList<LogRecord>();
+		this.setFormatter(new LogFormatter());
 	}
 
 	@Override
