@@ -182,9 +182,9 @@ public class ConsoleMonitor extends Handler
 			if(param != null)
 			{
 				if(param instanceof Integer)
-					index = (int)param;
+					index = (Integer)param;
 				else if(param instanceof Long)
-					index = (int)(long)param;
+					index = ((Long)param).intValue();
 				else if(param instanceof String)
 					index = Integer.parseInt((String)param);
 				

@@ -268,7 +268,21 @@ public class JsonRpcHandler extends AbstractHandler
 			{
 				entry.method.invoke(entry.handler, rpcRequest, rpcResponse);
 			}
-			catch(IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
+			catch(IllegalAccessException e)
+			{
+				LogHelper.warning("Failure when handling RPC request.\n" + e.getMessage());
+				
+				if(rpcResponse != null)
+					rpcResponse.setError(new Error(ErrorCode.INTERNAL_ERROR, "An error occured when processing the request.", null));
+			}
+			catch(IllegalArgumentException e)
+			{
+				LogHelper.warning("Failure when handling RPC request.\n" + e.getMessage());
+				
+				if(rpcResponse != null)
+					rpcResponse.setError(new Error(ErrorCode.INTERNAL_ERROR, "An error occured when processing the request.", null));
+			}
+			catch(InvocationTargetException e)
 			{
 				LogHelper.warning("Failure when handling RPC request.\n" + e.getMessage());
 				
