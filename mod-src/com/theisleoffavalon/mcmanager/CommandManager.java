@@ -11,6 +11,7 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.StringTranslate;
 import net.minecraft.util.StringUtils;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.theisleoffavalon.mcmanager.network.handler.jsonrpc.RpcMethod;
@@ -27,6 +28,24 @@ import com.theisleoffavalon.mcmanager.util.LogHelper;
  */
 public class CommandManager implements ICommandSender
 {
+	public static enum CommandParameterType
+	{
+		/**
+		 * An integer.
+		 */
+		INT,
+		
+		/**
+		 * A string.
+		 */
+		STRING,
+		
+		/**
+		 * A player name (alias of string).
+		 */
+		PLAYER;
+	}
+	
 	/**
 	 * The server command manager.
 	 */
@@ -58,7 +77,16 @@ public class CommandManager implements ICommandSender
 			String commandName = command.split("=")[0];
 			
 			// Currently there's no means for retrieving command parameters so we'l not be using this.
+			JSONArray params = new JSONArray();
+			JSONArray paramTypes = new JSONArray();
+			
+			// Add some default value
+			params.add("args");
+			paramTypes.add(CommandParameterType.STRING.name());
+			
 			JSONObject commandParameters = new JSONObject();
+			commandParameters.put("params", params);
+			commandParameters.put("paramTypes", paramTypes);
 			
 			commands.put(commandName, commandParameters);
 		}
