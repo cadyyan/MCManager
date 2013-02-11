@@ -72,6 +72,11 @@ public class JsonRpcHandler extends AbstractHandler
 		public final Object handler;
 		
 		/**
+		 * The annotation of the method.
+		 */
+		public final RpcMethod methodInfo;
+		
+		/**
 		 * The method that will handle the RPC method.
 		 */
 		public final Method method;
@@ -82,9 +87,10 @@ public class JsonRpcHandler extends AbstractHandler
 		 * @param handler - the handler instance
 		 * @param method - the RPC handler method
 		 */
-		public MethodHandlerEntry(Object handler, Method method)
+		public MethodHandlerEntry(Object handler, RpcMethod methodInfo, Method method)
 		{
 			this.handler = handler;
+			this.methodInfo = methodInfo;
 			this.method = method;
 		}
 	}
@@ -208,7 +214,7 @@ public class JsonRpcHandler extends AbstractHandler
 				continue;
 			}
 			
-			methodHandlers.put(rpcMethod.method(), new MethodHandlerEntry(handler, m));
+			methodHandlers.put(rpcMethod.method(), new MethodHandlerEntry(handler, rpcMethod, m));
 		}
 	}
 	
@@ -221,11 +227,17 @@ public class JsonRpcHandler extends AbstractHandler
 	@RpcMethod(method = "getAllMethods", description = "Get's all available methods implemented by the server. This returns an array of strings with each string being a method name.")
 	public void handleRPCGetAllMethods(RpcRequest request, RpcResponse response)
 	{
-		Set<String> methods = methodHandlers.keySet();
-		JSONArray array = new JSONArray();
+		JSONObject ret = new JSONObject();
 		
-		array.addAll(methods);
-		response.addResult("methods", array);
+		for(Map.Entry<String, MethodHandlerEntry> entry : methodHandlers.entrySet())
+		{
+			String methodName = entry.getKey();
+			String methodDescription = entry.getValue().methodInfo.description();
+			
+			ret.put(methodName, methodDescription);
+		}
+		
+		response.addResult("methods", ret);
 	}
 	
 	/**
