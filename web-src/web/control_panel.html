@@ -172,6 +172,7 @@
 			#command-args
 			{
 				height: 36px;
+				padding: 1px 6px;
 				top: 2px;
 			}
 			
@@ -218,8 +219,6 @@
 		</style>
 		
 		<script type="text/javascript">
-			var RPC_URL = '/rpc';
-		
 			$(document).ready(function () {
 				$('nav ul').append(new Tab('Info', 'info'))
 						   .append(new Tab('Console', 'console'))
@@ -244,7 +243,13 @@
 					RpcAjaxRequest('stopServer');
 				});
 				
-				$('#command-send').button();
+				$('#command-send').button().click(function () {
+					var command = $('#command-select').val();
+					var args = [$('#command-args').val()];
+				
+					RpcAjaxRequest('command', {'command': command, 'args': args}, function (data) {
+					});
+				});
 				
 				$('#settings').button({
 					icons: {
@@ -281,6 +286,8 @@
 				}).resize();
 				
 				update();
+				updateCommands();
+				updateMods();
 				setInterval(update, 5000);
 			});
 			
@@ -340,7 +347,7 @@
 					params = {};
 				}
 				
-				var succesWrapper = function (data) {
+				var successWrapper = function (data) {
 					if ($('#connection-error-dialog').closest('.ui-dialog').css('display') != 'none') {
 						$('#connection-error-dialog').dialog('close');
 					}
@@ -364,7 +371,7 @@
 					contentType: 'application/json; charset=utf-8',
 					data: RpcRequest(method, params),
 					dataType: 'json',
-					success: success,
+					success: successWrapper,
 					error: failure
 				});
 			}
@@ -376,13 +383,13 @@
 			
 			function updateInfo() {
 				RpcAjaxRequest('systemInfo', {}, function (data) {
-					$('#info-uptime').html(formatTime(data.params.uptime));
-					$('#info-usedmemory').html(formatMemory(data.params.usedMemory));
-					$('#info-maxmemory').html(formatMemory(data.params.maxMemory));
+					$('#info-uptime').html(formatTime(data.result.uptime));
+					$('#info-usedmemory').html(formatMemory(data.result.usedMemory));
+					$('#info-maxmemory').html(formatMemory(data.result.maxMemory));
 					
 					var playerList = $('#player-list ul');
 					playerList.children().remove();
-					var players = data.params.players;
+					var players = data.result.players;
 					for (var i = 0; i != players.length; i++) {
 						var player = players[i];
 						playerList.append($('<li>').append(player));
@@ -398,13 +405,42 @@
 				}
 			
 				RpcAjaxRequest('consoleMessages', params, function (data) {
-					var messages = data.params.messages;
+					var messages = data.result.messages;
 					var console = $('#console');
 					
 					for (var i = 0; i != messages.length; i++) {
 						var message = messages[i];
 						
 						console.append($('<li>').attr('message', message.id).html(message.message));
+					}
+				});
+			}
+			
+			function updateCommands() {
+				RpcAjaxRequest('getAllCommands', {}, function (data) {
+					var select = $('#command-select');
+					select.children().remove();
+					
+					var commands = data.result.commands;
+					for (var command in commands) {
+						select.append($('<option>').html(command));
+					}
+				});
+			}
+			
+			function updateMods() {
+				RpcAjaxRequest('getMods', {}, function (data) {
+					var modList = $('#mods');
+					var mods = data.result.mods;
+					
+					for (var i = 0; i != mods.length; i++) {
+						var modEntry = mods[i];
+						
+						var mod = $('<tr>');
+						mod.append($('<td>').html(modEntry.name));
+						mod.append($('<td>').html(modEntry.version));
+						
+						modList.append(mod);
 					}
 				});
 			}
@@ -449,6 +485,20 @@
 					var format = Math.round(gigabytes * 100) / 100 + ' GB';
 					return format;
 				}
+				
+				var megabytes = bytes / (1024 * 1024);
+				if (megabytes >= 1) {
+					var format = Math.round(megabytes * 100) / 100 + ' MB';
+					return format;
+				}
+				
+				var kilobytes = bytes / (1024);
+				if (kilobytes >= 1) {
+					var format = Math.round(kilobytes * 100) / 100 + ' KB';
+					return format;
+				}
+				
+				return bytes + ' bytes';
 			}
 		</script>
 	
@@ -487,7 +537,6 @@
 				</div>
 				<div class="section" title="Command">
 					<select id="command-select">
-						<option value="give" selected="selected">give</option>
 					</select>
 					<input id="command-args" class="ui-widget ui-state-default ui-corner-all" />
 					<button id="command-send">Send</button>
@@ -503,22 +552,12 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>FooCraft</td>
-								<td>1.3.3.7</td>
-							</tr>
-							<tr>
-								<td>BarCraft</td>
-								<td>6.0.0.65</td>
-							</tr>
 						</tbody>
 					</table>
 				</div>
 			</div>
 		</div>
 		<div id="status-bar" class="ui-widget ui-widget-header ui-corner-bottom">
-			<label>Connected to:</label>
-			<span id="server-connection">Nothing</span>
 			<a id="settings">Settings</a>
 		</div>
 		

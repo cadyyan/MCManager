@@ -5,6 +5,7 @@ import java.io.Writer;
 import java.security.InvalidParameterException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
@@ -18,7 +19,7 @@ import org.json.simple.JSONStreamAware;
  * @author Cadyyan
  *
  */
-public class RpcResponse extends RpcRequestResponse
+public class RpcResponse implements JSONAware, JSONStreamAware
 {
 	/**
 	 * A JSON RPC error code as defined in the spec.
@@ -119,6 +120,46 @@ public class RpcResponse extends RpcRequestResponse
 	}
 	
 	/**
+	 * The JSON RPC compliance version.
+	 */
+	public static final String JSON_RPC_VERSION = "2.0";
+	
+	/**
+	 * The JSON RPC version parameter.
+	 */
+	public static final String VERSION_PARAM = "jsonrpc";
+	
+	/**
+	 * The method parameter.
+	 */
+	public static final String METHOD_PARAM = "method";
+	
+	/**
+	 * The results parameter.
+	 */
+	public static final String RESULT_PARAM = "result";
+	
+	/**
+	 * The ID parameter.
+	 */
+	public static final String ID_PARAM = "id";
+	
+	/**
+	 * The RPC method.
+	 */
+	private String method;
+	
+	/**
+	 * The method results.
+	 */
+	private Map<String, Object> result;
+	
+	/**
+	 * The request/response ID. This might be <code>null</code>.
+	 */
+	private String id;
+	
+	/**
 	 * The error if there was one.
 	 */
 	private Error error;
@@ -143,13 +184,20 @@ public class RpcResponse extends RpcRequestResponse
 	 */
 	public RpcResponse(String method, Map<String, Object> parameters, String id)
 	{
-		super(method, parameters, id);
+		if(method == null)
+			throw new NullPointerException("The method name of a JSON RPC request/response must not be null.");
+		else if(method.isEmpty())
+			throw new InvalidParameterException("The method name of a JSON RPC request/response must not be empty.");
 		
-		// I know these checks should be done first but I'm not allowed to do that...
 		if(id == null)
 			throw new NullPointerException("The ID of a JSON RPC response must not be null.");
 		else if(id.isEmpty())
 			throw new InvalidParameterException("The ID of a JSON RPC response must not be empty.");
+		
+		this.method = method;
+		this.result = parameters;
+		this.id = id;
+		this.error = null;
 	}
 	
 	/**
@@ -160,6 +208,79 @@ public class RpcResponse extends RpcRequestResponse
 	public RpcResponse(RpcRequest request)
 	{
 		this(request.getMethod(), request.getID());
+	}
+	
+	/**
+	 * Gets the RPC method for this request/response.
+	 * 
+	 * @return the RPC method
+	 */
+	public String getMethod()
+	{
+		return method;
+	}
+	
+	/**
+	 * Gets all of the parameters for this request/response.
+	 * 
+	 * @return all of the parameters
+	 */
+	public Map<String, Object> getParameters()
+	{
+		return result;
+	}
+	
+	/**
+	 * Gets the name of all of the parameters for this request/response.
+	 * 
+	 * @return the set of parameter names
+	 */
+	public Set<String> getParameterNames()
+	{
+		return result.keySet();
+	}
+	
+	/**
+	 * Gets a parameter from the request/response. If
+	 * the parameter does not exist then <code>null</code>
+	 * is returned.
+	 * 
+	 * @param parameterName - the parameter name
+	 * @return a parameter value
+	 */
+	public Object getParameter(String parameterName)
+	{
+		if(result.containsKey(parameterName))
+			return result.get(parameterName);
+		else
+			return null;
+	}
+	
+	/**
+	 * Gets the ID for this request/response. This might
+	 * return <code>null</code> for requests.
+	 * 
+	 * @return the request ID
+	 */
+	public String getID()
+	{
+		return id;
+	}
+	
+	/**
+	 * Adds a result to the request/response.
+	 * 
+	 * @param resultName - the name of the result
+	 * @param resultValue - the value of the result
+	 */
+	public void addResult(String resultName, Object resultValue)
+	{
+		if(resultName == null)
+			throw new NullPointerException("JSON RPC result names cannot be null.");
+		else if(resultName.isEmpty())
+			throw new InvalidParameterException("JSON RPC result names cannot be empty strings.");
+		
+		result.put(resultName, resultValue);
 	}
 	
 	/**
@@ -183,6 +304,12 @@ public class RpcResponse extends RpcRequestResponse
 	{
 		this.error = error;
 	}
+	
+	@Override
+	public void writeJSONString(Writer out) throws IOException
+	{
+		out.append(toJSONString());
+	}
 
 	@Override
 	public String toJSONString()
@@ -191,7 +318,7 @@ public class RpcResponse extends RpcRequestResponse
 		
 		obj.put(VERSION_PARAM, JSON_RPC_VERSION);
 		obj.put(METHOD_PARAM, method);
-		obj.put(PARAMETERS_PARAM, params);
+		obj.put(RESULT_PARAM, result);
 		obj.put(ID_PARAM, id);
 		
 		if(error != null)
