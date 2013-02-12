@@ -245,9 +245,9 @@
 				
 				$('#command-send').button().click(function () {
 					var command = $('#command-select').val();
-					var args = [$('#command-args').val()];
+					var args = $('#command-args').val();
 				
-					RpcAjaxRequest('command', {'command': command, 'args': args}, function (data) {
+					RpcAjaxRequest('command', {'command': command, 'args': {'args': args}}, function (data) {
 					});
 				});
 				

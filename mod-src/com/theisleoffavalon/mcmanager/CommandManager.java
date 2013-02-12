@@ -109,13 +109,13 @@ public class CommandManager implements ICommandSender
 		String commandName = (String)request.getParameter("command");
 		
 		StringBuilder sb = new StringBuilder();
-		List<String> args = (List<String>)request.getParameter("args");
-		for(String arg : args)
+		Map<String, Object> args = (Map<String, Object>)request.getParameter("args");
+		for(Object arg : args.values())
 		{
 			if(sb.length() > 0)
 				sb.append(" ");
 			
-			sb.append(arg);
+			sb.append(arg.toString());
 		}
 		
 		String commandArgs = sb.toString();
