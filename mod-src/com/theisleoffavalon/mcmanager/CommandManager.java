@@ -91,7 +91,7 @@ public class CommandManager implements ICommandSender
 			commands.put(commandName, commandParameters);
 		}
 		
-		response.addResult("commands", commands);
+		response.setResult(commands);
 	}
 	
 	/**

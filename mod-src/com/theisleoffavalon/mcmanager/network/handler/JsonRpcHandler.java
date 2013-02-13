@@ -237,7 +237,7 @@ public class JsonRpcHandler extends AbstractHandler
 			ret.put(methodName, methodDescription);
 		}
 		
-		response.addResult("methods", ret);
+		response.setResult(ret);
 	}
 	
 	/**
@@ -285,21 +285,21 @@ public class JsonRpcHandler extends AbstractHandler
 				LogHelper.warning("Failure when handling RPC request.\n" + e.getMessage());
 				
 				if(rpcResponse != null)
-					rpcResponse.setError(new Error(ErrorCode.INTERNAL_ERROR, "An error occured when processing the request.", null));
+					rpcResponse.setError(new Error(ErrorCode.INTERNAL_ERROR, "An error occured when processing the request.", e));
 			}
 			catch(IllegalArgumentException e)
 			{
 				LogHelper.warning("Failure when handling RPC request.\n" + e.getMessage());
 				
 				if(rpcResponse != null)
-					rpcResponse.setError(new Error(ErrorCode.INTERNAL_ERROR, "An error occured when processing the request.", null));
+					rpcResponse.setError(new Error(ErrorCode.INTERNAL_ERROR, "An error occured when processing the request.", e));
 			}
 			catch(InvocationTargetException e)
 			{
 				LogHelper.warning("Failure when handling RPC request.\n" + e.getMessage());
 				
 				if(rpcResponse != null)
-					rpcResponse.setError(new Error(ErrorCode.INTERNAL_ERROR, "An error occured when processing the request.", null));
+					rpcResponse.setError(new Error(ErrorCode.INTERNAL_ERROR, "An error occured when processing the request.", e));
 			}
 		}
 		

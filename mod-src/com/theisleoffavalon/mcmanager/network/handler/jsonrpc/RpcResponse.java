@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.security.InvalidParameterException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
@@ -152,7 +152,7 @@ public class RpcResponse implements JSONAware, JSONStreamAware
 	/**
 	 * The method results.
 	 */
-	private Map<String, Object> result;
+	private Object result;
 	
 	/**
 	 * The request/response ID. This might be <code>null</code>.
@@ -179,10 +179,10 @@ public class RpcResponse implements JSONAware, JSONStreamAware
 	 * Creates a JSON RPC response assuming all information is known already.
 	 * 
 	 * @param method - the RPC method
-	 * @param parameters - the parameters
+	 * @param parameter - the parameter
 	 * @param id - the ID
 	 */
-	public RpcResponse(String method, Map<String, Object> parameters, String id)
+	public RpcResponse(String method, Object parameter, String id)
 	{
 		if(method == null)
 			throw new NullPointerException("The method name of a JSON RPC request/response must not be null.");
@@ -195,7 +195,7 @@ public class RpcResponse implements JSONAware, JSONStreamAware
 			throw new InvalidParameterException("The ID of a JSON RPC response must not be empty.");
 		
 		this.method = method;
-		this.result = parameters;
+		this.result = parameter;
 		this.id = id;
 		this.error = null;
 	}
@@ -221,39 +221,73 @@ public class RpcResponse implements JSONAware, JSONStreamAware
 	}
 	
 	/**
-	 * Gets all of the parameters for this request/response.
+	 * Gets the result for this response.
 	 * 
-	 * @return all of the parameters
+	 * @return the result
 	 */
-	public Map<String, Object> getParameters()
+	public Object getResult()
 	{
 		return result;
 	}
 	
 	/**
-	 * Gets the name of all of the parameters for this request/response.
+	 * Gets the result as a boolean.
 	 * 
-	 * @return the set of parameter names
+	 * @return a boolean
 	 */
-	public Set<String> getParameterNames()
+	public boolean getResultAsBool()
 	{
-		return result.keySet();
+		return (Boolean)result;
 	}
 	
 	/**
-	 * Gets a parameter from the request/response. If
-	 * the parameter does not exist then <code>null</code>
-	 * is returned.
+	 * Gets the result as an integer.
 	 * 
-	 * @param parameterName - the parameter name
-	 * @return a parameter value
+	 * @return an integer
 	 */
-	public Object getParameter(String parameterName)
+	public int getResultAsInt()
 	{
-		if(result.containsKey(parameterName))
-			return result.get(parameterName);
-		else
-			return null;
+		return (Integer)result;
+	}
+	
+	/**
+	 * Gets the result as a long.
+	 * 
+	 * @return a long
+	 */
+	public long getResultAsLong()
+	{
+		return (Long)result;
+	}
+	
+	/**
+	 * Gets the result as a double.
+	 * 
+	 * @return a double
+	 */
+	public double getResultAsDouble()
+	{
+		return (Double)result;
+	}
+	
+	/**
+	 * Gets the result as a list.
+	 * 
+	 * @return a list
+	 */
+	public <T> List<T> getResultAsList()
+	{
+		return (List<T>)result;
+	}
+	
+	/**
+	 * Gets the result as a map.
+	 * 
+	 * @return a map
+	 */
+	public <K, V> Map<K, V> getResultAsMap()
+	{
+		return (Map<K, V>)result;
 	}
 	
 	/**
@@ -270,17 +304,11 @@ public class RpcResponse implements JSONAware, JSONStreamAware
 	/**
 	 * Adds a result to the request/response.
 	 * 
-	 * @param resultName - the name of the result
-	 * @param resultValue - the value of the result
+	 * @param result - the result
 	 */
-	public void addResult(String resultName, Object resultValue)
+	public void setResult(Object result)
 	{
-		if(resultName == null)
-			throw new NullPointerException("JSON RPC result names cannot be null.");
-		else if(resultName.isEmpty())
-			throw new InvalidParameterException("JSON RPC result names cannot be empty strings.");
-		
-		result.put(resultName, resultValue);
+		this.result = result;
 	}
 	
 	/**

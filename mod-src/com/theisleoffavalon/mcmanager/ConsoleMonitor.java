@@ -187,10 +187,10 @@ public class ConsoleMonitor extends Handler
 					index = ((Long)param).intValue();
 				else if(param instanceof String)
 					index = Integer.parseInt((String)param);
-				
 				index++;
 			}
-			else
+			
+			if(param == null || index == -1)
 				index = records.size() - 1; // We'll give them the last message that came in.
 			
 			while(index < records.size())
@@ -205,6 +205,6 @@ public class ConsoleMonitor extends Handler
 			}
 		}
 		
-		response.addResult("messages", messages);
+		response.setResult(messages);
 	}
 }

@@ -119,11 +119,15 @@ public class ServerMonitor
 	@RpcMethod(method = "systemInfo", description = "Gets information about the server.")
 	public void getSystemInfo(RpcRequest request, RpcResponse response)
 	{
-		response.addResult("hostname", getHostname());
-		response.addResult("uptime", getUpTime());
-		response.addResult("usedMemory", getUsedMemory());
-		response.addResult("maxMemory", getMaxAllocatedMemory());
-		response.addResult("players", getAllOnlinePlayers());
+		JSONObject ret = new JSONObject();
+		
+		ret.put("hostname", getHostname());
+		ret.put("uptime", getUpTime());
+		ret.put("usedMemory", getUsedMemory());
+		ret.put("maxMemory", getMaxAllocatedMemory());
+		ret.put("players", getAllOnlinePlayers());
+		
+		response.setResult(ret);
 	}
 	
 	/**
@@ -149,7 +153,7 @@ public class ServerMonitor
 			mods.add(obj);
 		}
 		
-		response.addResult("mods", mods);
+		response.setResult(mods);
 	}
 	
 	/**

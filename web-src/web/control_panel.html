@@ -405,7 +405,7 @@
 				}
 			
 				RpcAjaxRequest('consoleMessages', params, function (data) {
-					var messages = data.result.messages;
+					var messages = data.result;
 					var console = $('#console');
 					
 					for (var i = 0; i != messages.length; i++) {
@@ -421,7 +421,7 @@
 					var select = $('#command-select');
 					select.children().remove();
 					
-					var commands = data.result.commands;
+					var commands = data.result;
 					for (var command in commands) {
 						select.append($('<option>').html(command));
 					}
@@ -431,7 +431,7 @@
 			function updateMods() {
 				RpcAjaxRequest('getMods', {}, function (data) {
 					var modList = $('#mods');
-					var mods = data.result.mods;
+					var mods = data.result;
 					
 					for (var i = 0; i != mods.length; i++) {
 						var modEntry = mods[i];
