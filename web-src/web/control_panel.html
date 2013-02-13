@@ -398,10 +398,10 @@
 			}
 			
 			function updateConsole() {
-				var params = {};
+				var params = -1;
 				var last = $('#console li:last-child');
 				if (last.length != 0) {
-					params = { from: parseInt(last.attr('message')) };
+					params = parseInt(last.attr('message'));
 				}
 			
 				RpcAjaxRequest('consoleMessages', params, function (data) {

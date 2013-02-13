@@ -178,20 +178,21 @@ public class ConsoleMonitor extends Handler
 		synchronized(records)
 		{
 			Integer index = null;
-			Object param = request.getParameter("from");
-			if(param != null)
+			
+			try
 			{
-				if(param instanceof Integer)
-					index = (Integer)param;
-				else if(param instanceof Long)
-					index = ((Long)param).intValue();
-				else if(param instanceof String)
-					index = Integer.parseInt((String)param);
-				index++;
+				index = request.getParametersAsInt();
+			}
+			catch(ClassCastException e)
+			{
+				if(request.getParameters() instanceof Long)
+					index = ((Long)request.getParametersAsLong()).intValue();
 			}
 			
-			if(param == null || index == -1)
-				index = records.size() - 1; // We'll give them the last message that came in.
+			if(index == null || index == -1)
+				index = records.size() - 2; // We'll give them the last message that came in.
+			
+			index++;
 			
 			while(index < records.size())
 			{

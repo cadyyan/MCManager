@@ -3,7 +3,6 @@ package com.theisleoffavalon.mcmanager.network.handler.jsonrpc;
 import java.io.IOException;
 import java.io.Writer;
 import java.security.InvalidParameterException;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -172,7 +171,7 @@ public class RpcResponse implements JSONAware, JSONStreamAware
 	 */
 	public RpcResponse(String method, String id)
 	{
-		this(method, new LinkedHashMap<String, Object>(), id);
+		this(method, null, id);
 	}
 	
 	/**
@@ -271,6 +270,16 @@ public class RpcResponse implements JSONAware, JSONStreamAware
 	}
 	
 	/**
+	 * Gets the result as a string.
+	 * 
+	 * @return a string
+	 */
+	public String getResultAsString()
+	{
+		return (String)result;
+	}
+	
+	/**
 	 * Gets the result as a list.
 	 * 
 	 * @return a list
@@ -346,7 +355,7 @@ public class RpcResponse implements JSONAware, JSONStreamAware
 		
 		obj.put(VERSION_PARAM, JSON_RPC_VERSION);
 		obj.put(METHOD_PARAM, method);
-		obj.put(RESULT_PARAM, result);
+		obj.put(RESULT_PARAM, result == null ? "" : result);
 		obj.put(ID_PARAM, id);
 		
 		if(error != null)

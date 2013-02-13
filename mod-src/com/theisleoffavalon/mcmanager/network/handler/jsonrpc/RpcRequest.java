@@ -3,9 +3,8 @@ package com.theisleoffavalon.mcmanager.network.handler.jsonrpc;
 import java.io.IOException;
 import java.io.Writer;
 import java.security.InvalidParameterException;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import org.json.simple.JSONAware;
@@ -54,7 +53,7 @@ public class RpcRequest implements JSONAware, JSONStreamAware
 	/**
 	 * The method parameters.
 	 */
-	private Map<String, Object> params;
+	private Object params;
 	
 	/**
 	 * The request/response ID. This might be <code>null</code>.
@@ -82,7 +81,7 @@ public class RpcRequest implements JSONAware, JSONStreamAware
 	 */
 	public RpcRequest(String method, boolean createID)
 	{
-		this(method, new LinkedHashMap<String, Object>(), createID ? UUID.randomUUID().toString() : "");
+		this(method, null, createID ? UUID.randomUUID().toString() : "");
 	}
 	
 	/**
@@ -93,7 +92,7 @@ public class RpcRequest implements JSONAware, JSONStreamAware
 	 * @param parameters - the parameters
 	 * @param id - the ID of the request (this could be <code>null</code>)
 	 */
-	public RpcRequest(String method, Map<String, Object> parameters, String id)
+	public RpcRequest(String method, Object parameters, String id)
 	{
 		if(method == null)
 			throw new NullPointerException("The method name of a JSON RPC request/response must not be null.");
@@ -106,7 +105,7 @@ public class RpcRequest implements JSONAware, JSONStreamAware
 	}
 	
 	/**
-	 * Gets the RPC method for this request/response.
+	 * Gets the RPC method for this request.
 	 * 
 	 * @return the RPC method
 	 */
@@ -116,39 +115,83 @@ public class RpcRequest implements JSONAware, JSONStreamAware
 	}
 	
 	/**
-	 * Gets all of the parameters for this request/response.
+	 * Gets all of the parameters for this request.
 	 * 
 	 * @return all of the parameters
 	 */
-	public Map<String, Object> getParameters()
+	public Object getParameters()
 	{
 		return params;
 	}
 	
 	/**
-	 * Gets the name of all of the parameters for this request/response.
+	 * Gets the parameters as a boolean.
 	 * 
-	 * @return the set of parameter names
+	 * @return a boolean
 	 */
-	public Set<String> getParameterNames()
+	public boolean getParametersAsBoolean()
 	{
-		return params.keySet();
+		return (Boolean)params;
 	}
 	
 	/**
-	 * Gets a parameter from the request/response. If
-	 * the parameter does not exist then <code>null</code>
-	 * is returned.
+	 * Gets the parameters as an integer.
 	 * 
-	 * @param parameterName - the parameter name
-	 * @return a parameter value
+	 * @return an integer
 	 */
-	public Object getParameter(String parameterName)
+	public int getParametersAsInt()
 	{
-		if(params.containsKey(parameterName))
-			return params.get(parameterName);
-		else
-			return null;
+		return (Integer)params;
+	}
+	
+	/**
+	 * Gets the parameters as a long.
+	 * 
+	 * @return a long
+	 */
+	public long getParametersAsLong()
+	{
+		return (Long)params;
+	}
+	
+	/**
+	 * Gets the parameters as a double.
+	 * 
+	 * @return a double
+	 */
+	public double getParametersAsDouble()
+	{
+		return (Double)params;
+	}
+	
+	/**
+	 * Gets the parameters as a string.
+	 * 
+	 * @return a string
+	 */
+	public String getParametersAsString()
+	{
+		return (String)params;
+	}
+	
+	/**
+	 * Gets the parameters as a list.
+	 * 
+	 * @return a list
+	 */
+	public <T> List<T> getParametersAsList()
+	{
+		return (List<T>)params;
+	}
+	
+	/**
+	 * Gets the parameters as a map.
+	 * 
+	 * @return a map
+	 */
+	public <K, V> Map<K, V> getParametersAsMap()
+	{
+		return (Map<K, V>)params;
 	}
 	
 	/**
@@ -160,22 +203,6 @@ public class RpcRequest implements JSONAware, JSONStreamAware
 	public String getID()
 	{
 		return id;
-	}
-	
-	/**
-	 * Adds a parameter to the request/response.
-	 * 
-	 * @param parameterName - the name of the parameter
-	 * @param parameterValue - the value of the parameter
-	 */
-	public void addParameter(String parameterName, Object parameterValue)
-	{
-		if(parameterName == null)
-			throw new NullPointerException("JSON RPC parameter names cannot be null.");
-		else if(parameterName.isEmpty())
-			throw new InvalidParameterException("JSON RPC parameter names cannot be empty strings.");
-		
-		params.put(parameterName, parameterValue);
 	}
 	
 	/**
@@ -201,7 +228,7 @@ public class RpcRequest implements JSONAware, JSONStreamAware
 		
 		obj.put(VERSION_PARAM, JSON_RPC_VERSION);
 		obj.put(METHOD_PARAM, method);
-		obj.put(PARAMETERS_PARAM, params);
+		obj.put(PARAMETERS_PARAM, params == null ? "" : params);
 		obj.put(ID_PARAM, id);
 		
 		return obj.toJSONString();

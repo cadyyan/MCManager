@@ -18,13 +18,11 @@ package com.theisleoffavalon.mcmanager.network.handler;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -251,7 +249,7 @@ public class JsonRpcHandler extends AbstractHandler
 		String method = (String)jsonObj.get("method");
 		String id = (String)jsonObj.get("id");
 		
-		RpcRequest request = new RpcRequest(method, (Map<String, Object>)jsonObj.get("params"), id);
+		RpcRequest request = new RpcRequest(method, jsonObj.get("params"), id);
 		
 		return request;
 	}

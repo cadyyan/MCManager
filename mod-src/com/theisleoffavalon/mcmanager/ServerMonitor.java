@@ -166,5 +166,7 @@ public class ServerMonitor
 	public void stopServer(RpcRequest request, RpcResponse response)
 	{
 		server.initiateShutdown();
+
+		response.setResult("success");
 	}
 }

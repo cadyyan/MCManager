@@ -106,10 +106,12 @@ public class CommandManager implements ICommandSender
 												 "strings in the \"args\" parameter.")
 	public void command(RpcRequest request, RpcResponse response)
 	{
-		String commandName = (String)request.getParameter("command");
+		Map<String, Object> commandMap = request.getParametersAsMap();
+		
+		String commandName = (String)commandMap.get("command");
 		
 		StringBuilder sb = new StringBuilder();
-		Map<String, Object> args = (Map<String, Object>)request.getParameter("args");
+		Map<String, Object> args = (Map<String, Object>)commandMap.get("args");
 		for(Object arg : args.values())
 		{
 			if(sb.length() > 0)
@@ -122,6 +124,8 @@ public class CommandManager implements ICommandSender
 		
 		String command = commandName + " " + commandArgs;
 		commandManager.executeCommand(this, command);
+		
+		response.setResult("success");
 	}
 
 	/**
