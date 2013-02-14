@@ -22,6 +22,7 @@ import java.io.InputStream;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -41,10 +42,27 @@ public class RootHttpHandler extends AbstractHandler
 	@Override
 	public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
 	{
+		// Check if the user is logged in. If so then send them to the control panel.
+		// If not then direct them to the login page.
+		// TODO: log in page
+		loadHtml(response, "control_panel.html");
+		
+		baseRequest.setHandled(true);
+	}
+	
+	/**
+	 * Loads an HTML page into the given response.
+	 * 
+	 * @param response - the response
+	 * @param page - the requested page
+	 * @throws IOException thrown when something happens when loading the page
+	 */
+	private void loadHtml(HttpServletResponse response, String page) throws IOException
+	{
 		try
 		{
 			// Not the most efficient way of serving up a file but it'll work.
-			InputStream html = getClass().getClassLoader().getResourceAsStream("web/control_panel.html");
+			InputStream html = getClass().getClassLoader().getResourceAsStream("web/html/" + page);
 			
 			byte buf[] = new byte[html.available()];
 			html.read(buf);
@@ -61,7 +79,5 @@ public class RootHttpHandler extends AbstractHandler
 		{
 			response.getOutputStream().close();
 		}
-		
-		baseRequest.setHandled(true);
 	}
 }

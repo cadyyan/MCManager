@@ -11,6 +11,7 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.StringTranslate;
 import net.minecraft.util.StringUtils;
 
+import org.eclipse.jetty.server.Request;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -64,9 +65,10 @@ public class CommandManager implements ICommandSender
 	 * 
 	 * @param request - the request
 	 * @param response - the response
+	 * @param baseRequest - the base request
 	 */
 	@RpcMethod(method = "getAllCommands", description = "Sends a list of strings that represents the commands the server has available.")
-	public void getAllCommands(RpcRequest request, RpcResponse response)
+	public void getAllCommands(RpcRequest request, RpcResponse response, Request baseRequest)
 	{
 		JSONObject commands = new JSONObject();
 		Map<String, ICommand> commandMap = (Map<String, ICommand>)MinecraftServer.getServer().getCommandManager().getCommands();
@@ -99,12 +101,13 @@ public class CommandManager implements ICommandSender
 	 * 
 	 * @param request - the request
 	 * @param response - the response
+	 * @param baseRequest - the base request
 	 */
 	@RpcMethod(method = "command", description = "Handles the client sending a command to the Minecraft server.\n" +
 												 "This method expects the server command to be sent in the \"command\"\n" +
 												 "parameter. The arguments for the command are given as a list of\n" +
 												 "strings in the \"args\" parameter.")
-	public void command(RpcRequest request, RpcResponse response)
+	public void command(RpcRequest request, RpcResponse response, Request baseRequest)
 	{
 		Map<String, Object> commandMap = request.getParametersAsMap();
 		

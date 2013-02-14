@@ -1,6 +1,6 @@
 <!--
  - DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
- -                    Version 2, December 2004
+ -					Version 2, December 2004
  - 
  - Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
  - 
@@ -8,7 +8,7 @@
  - copies of this license document, and changing it is allowed as long
  - as the name is changed.
  - 
- -            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+ -			DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
  -   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
  - 
  - 0. You just DO WHAT THE FUCK YOU WANT TO.
@@ -17,15 +17,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 	<head>
-	   <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-	   <title>MCManager</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+		<title>MCManager</title>
 	   
-	   <link rel="Stylesheet" href="http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css" />
+		<link rel="Stylesheet" href="http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css" />
+		<link rel="Stylesheet" href="resources/template.css" />
 	   
-	   <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.0.js"></script>
-	   <script type="text/javascript" src="http://code.jquery.com/ui/1.10.0/jquery-ui.js"></script>
-	</head>
-	<body>
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.0.js"></script>
+		<script type="text/javascript" src="http://code.jquery.com/ui/1.10.0/jquery-ui.js"></script>
+		<script type="text/javascript" src="resources/template.js"></script>
+	   
 		<style type="text/css">
 			#header
 			{
@@ -90,27 +91,6 @@
 			#content>div:not(.selected)
 			{
 				display: none;
-			}
-			
-			div.section
-			{
-				margin-bottom: 1em;
-				min-height: 3em;
-				padding: 0.5em;
-			}
-			
-			div.section:last-child
-			{
-				margin-bottom: 0px;
-			}
-			
-			div.section div.title
-			{
-				border-top: none;
-				border-left: none;
-				border-right: none;
-				margin: -0.5em -0.5em 0.5em;
-				padding: 2px 0.5em;
 			}
 			
 			#server-info div.section
@@ -217,23 +197,13 @@
 				width: 100%;
 			}
 		</style>
-		
+	</head>
+	<body>
 		<script type="text/javascript">
 			$(document).ready(function () {
 				$('nav ul').append(new Tab('Info', 'info'))
 						   .append(new Tab('Console', 'console'))
 						   .append(new Tab('Mods', 'mods'));
-				
-				var sections = $('#content div.section');
-				for (var i = 0; i != sections.length; i++) {
-					var section = $(sections[i]);
-					section.addClass('ui-widget-content ui-corner-all');
-					
-					var header = $('<div>').html(section.attr('title'))
-										   .addClass('title ui-widget-header');
-					
-					section.prepend(header);
-				}
 				
 				$('#content th').addClass('ui-widget-header');
 				
@@ -320,60 +290,6 @@
 				
 				var body = $('#content div[name=' + tabAnchor.attr('body') + ']');
 				body.addClass('selected');
-			}
-			
-			function GUID() {
-				var guid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-							var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-							return v.toString(16);
-						});
-				
-				return guid;
-			}
-			
-			function RpcRequest(method, params) {
-				var json = {
-					jsonrpc: '2.0',
-					method: method,
-					params: params,
-					id: GUID()
-				};
-				
-				return JSON.stringify(json);
-			}
-			
-			function RpcAjaxRequest(method, params, success, failure) {
-				if (params == undefined) {
-					params = {};
-				}
-				
-				var successWrapper = function (data) {
-					if ($('#connection-error-dialog').closest('.ui-dialog').css('display') != 'none') {
-						$('#connection-error-dialog').dialog('close');
-					}
-					
-					if (success != undefined) {
-						success(data);
-					}
-				}
-				
-				if (failure == undefined) {
-					failure = function () {
-						if ($('#connection-error-dialog').closest('.ui-dialog').css('display') == 'none') {
-							$('#connection-error-dialog').dialog('open');
-						}
-					};
-				}
-			
-				$.ajax({
-					url: '/rpc',
-					type: 'POST',
-					contentType: 'application/json; charset=utf-8',
-					data: RpcRequest(method, params),
-					dataType: 'json',
-					success: successWrapper,
-					error: failure
-				});
 			}
 			
 			function update() {
@@ -512,7 +428,7 @@
 		<div id="content" class="ui-widget ui-widget-content">
 			<div name="info">
 				<div id="server-info" class="section" title="Server Info">
-				    <div class="section" title="Uptime">
+					<div class="section" title="Uptime">
 					   <span id="info-uptime">Offline</span>
 					</div>
 					<div class="section" title="Used Memory">

@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import org.eclipse.jetty.server.Request;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -162,6 +163,7 @@ public class ConsoleMonitor extends Handler
 	 * 
 	 * @param request - the request
 	 * @param response - the response
+	 * @param baseRequest - the base request
 	 */
 	@RpcMethod(method = "consoleMessages", description = "Retrieves console messages." +
 														 "A list of messages are returned " +
@@ -171,7 +173,7 @@ public class ConsoleMonitor extends Handler
 														 "called. The parameter for this index is called \"from\". " +
 														 "If this is the first call this parameter should be ommitted." +
 														 "The console messages are returned in the \"messages\" parameter.")
-	public void getConsoleMessages(RpcRequest request, RpcResponse response)
+	public void getConsoleMessages(RpcRequest request, RpcResponse response, Request baseRequest)
 	{
 		JSONArray messages = new JSONArray();
 		
@@ -194,7 +196,7 @@ public class ConsoleMonitor extends Handler
 			
 			index++;
 			
-			while(index < records.size())
+			while(index != nextLogID)
 			{
 				JSONObject record = new JSONObject();
 				record.put("id", index);
@@ -203,6 +205,8 @@ public class ConsoleMonitor extends Handler
 				messages.add(record);
 				
 				index++;
+				if(index < 0)
+					index = 0;
 			}
 		}
 		

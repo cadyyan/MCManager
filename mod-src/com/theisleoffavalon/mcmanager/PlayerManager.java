@@ -3,6 +3,10 @@ package com.theisleoffavalon.mcmanager;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.servlet.http.HttpSession;
+
+import org.eclipse.jetty.server.Request;
+
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.theisleoffavalon.mcmanager.network.handler.jsonrpc.RpcMethod;
@@ -37,6 +41,7 @@ public class PlayerManager
 	 * 
 	 * @param request - the request
 	 * @param response - the response
+	 * @param baseRequest - the base request
 	 */
 	@RpcMethod(method = "login", description = "A login attempt must be made with two parameters. The first\n" +
 											   "is the username of the person. The second is the password. The\n" +
@@ -46,7 +51,7 @@ public class PlayerManager
 											   "The token should be used from then on to authenticate the user. The\n" +
 											   "expected locale for the hashed password is UTF-8 and all characters\n" +
 											   "should be lower case.")
-	public void rpcLogin(RpcRequest request, RpcResponse response)
+	public void rpcLogin(RpcRequest request, RpcResponse response, Request baseRequest)
 	{
 		Map<String, String> loginRequest = request.getParametersAsMap();
 		String username = loginRequest.get("username");

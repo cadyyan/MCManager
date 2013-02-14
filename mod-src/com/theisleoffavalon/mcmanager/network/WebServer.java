@@ -25,12 +25,15 @@ import net.minecraftforge.common.Configuration;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.server.session.HashSessionIdManager;
+import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.thread.ExecutorThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
 import com.theisleoffavalon.mcmanager.network.handler.JsonRpcHandler;
 import com.theisleoffavalon.mcmanager.network.handler.RegExContextHandler;
 import com.theisleoffavalon.mcmanager.network.handler.RegExContextHandlerCollection;
+import com.theisleoffavalon.mcmanager.network.handler.ResourceHandler;
 import com.theisleoffavalon.mcmanager.network.handler.RootHttpHandler;
 import com.theisleoffavalon.mcmanager.util.LogHelper;
 
@@ -59,9 +62,19 @@ public class WebServer
 	private HandlerCollection handlers;
 	
 	/**
+	 * The session handler.
+	 */
+	private SessionHandler sessionHandler;
+	
+	/**
 	 * The handler for the root context.
 	 */
 	private Handler rootHandler;
+	
+	/**
+	 * The resource handler.
+	 */
+	private Handler resourceHandler;
 	
 	/**
 	 * The JSON RPC handler.
@@ -81,6 +94,7 @@ public class WebServer
 		// TODO: set this up to use HTTPS instead when requested
 		webServer = new Server(config.get("webserver", "port", 1716).getInt());
 		webServer.setGracefulShutdown(STOP_WAIT_TIME);
+		webServer.setSessionIdManager(new HashSessionIdManager());
 		
 		int maxConnections = config.get("webserver", "max-sessions", 20).getInt();
 		if(maxConnections < 2)
@@ -96,8 +110,15 @@ public class WebServer
 		handlers = new RegExContextHandlerCollection();
 		webServer.setHandler(handlers);
 		
+		sessionHandler = new SessionHandler();
+		sessionHandler.getSessionManager().setSessionIdManager(webServer.getSessionIdManager());
+		addHandler("/", sessionHandler);
+		
 		rootHandler = new RootHttpHandler();
-		addHandler("/", rootHandler);
+		sessionHandler.setHandler(rootHandler);
+		
+		resourceHandler = new ResourceHandler();
+		addHandler("^/resources/.*$", resourceHandler);
 		
 		rpcHandler = new JsonRpcHandler();
 		addHandler("/rpc/*", rpcHandler);

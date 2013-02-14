@@ -150,7 +150,7 @@ public class JsonRpcHandler extends AbstractHandler
 					return;
 				}
 				
-				RpcResponse rpcResponse = handleRpcRequest(rpcRequest);
+				RpcResponse rpcResponse = handleRpcRequest(rpcRequest, baseRequest);
 				batchResponse.add(rpcResponse);
 			}
 			
@@ -171,7 +171,7 @@ public class JsonRpcHandler extends AbstractHandler
 				return;
 			}
 			
-			RpcResponse rpcResponse = handleRpcRequest(rpcRequest);
+			RpcResponse rpcResponse = handleRpcRequest(rpcRequest, baseRequest);
 			Writer writer = response.getWriter();
 			rpcResponse.writeJSONString(writer);
 			response.setStatus(HttpServletResponse.SC_OK);
@@ -221,9 +221,10 @@ public class JsonRpcHandler extends AbstractHandler
 	 * 
 	 * @param request - the request
 	 * @param response - the response
+	 * @param baseRequest - the base request
 	 */
 	@RpcMethod(method = "getAllMethods", description = "Get's all available methods implemented by the server. This returns an array of strings with each string being a method name.")
-	public void handleRPCGetAllMethods(RpcRequest request, RpcResponse response)
+	public void handleRPCGetAllMethods(RpcRequest request, RpcResponse response, Request baseRequest)
 	{
 		JSONObject ret = new JSONObject();
 		
@@ -258,9 +259,10 @@ public class JsonRpcHandler extends AbstractHandler
 	 * Handles an RPC request.
 	 * 
 	 * @param rpcRequest - the RPC request
+	 * @param baseRequest - the base request
 	 * @return an RPC response
 	 */
-	private RpcResponse handleRpcRequest(RpcRequest rpcRequest)
+	private RpcResponse handleRpcRequest(RpcRequest rpcRequest, Request baseRequest)
 	{
 		RpcResponse rpcResponse = rpcRequest.isNotification() ? null : new RpcResponse(rpcRequest);
 		String methodName = rpcRequest.getMethod();
@@ -276,7 +278,7 @@ public class JsonRpcHandler extends AbstractHandler
 			MethodHandlerEntry entry = methodHandlers.get(methodName);
 			try
 			{
-				entry.method.invoke(entry.handler, rpcRequest, rpcResponse);
+				entry.method.invoke(entry.handler, rpcRequest, rpcResponse, baseRequest);
 			}
 			catch(IllegalAccessException e)
 			{

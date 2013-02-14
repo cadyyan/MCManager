@@ -6,6 +6,7 @@ import java.util.Map;
 
 import net.minecraft.server.MinecraftServer;
 
+import org.eclipse.jetty.server.Request;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -115,9 +116,10 @@ public class ServerMonitor
 	 * 
 	 * @param request - the request
 	 * @param response - the response
+	 * @param baseRequest - the base request
 	 */
 	@RpcMethod(method = "systemInfo", description = "Gets information about the server.")
-	public void getSystemInfo(RpcRequest request, RpcResponse response)
+	public void getSystemInfo(RpcRequest request, RpcResponse response, Request baseRequest)
 	{
 		JSONObject ret = new JSONObject();
 		
@@ -135,9 +137,10 @@ public class ServerMonitor
 	 * 
 	 * @param request - the request
 	 * @param response - the response
+	 * @param baseRequest - the base request
 	 */
 	@RpcMethod(method = "getMods", description = "Gets a list of all the mods loaded on the server.")
-	public void getMods(RpcRequest request, RpcResponse response)
+	public void getMods(RpcRequest request, RpcResponse response, Request baseRequest)
 	{
 		JSONArray mods = new JSONArray();
 		Map<String, ModContainer> modMap = getLoadedMods();
@@ -161,9 +164,10 @@ public class ServerMonitor
 	 * 
 	 * @param request - the request
 	 * @param response - the response
+	 * @param baseRequest - the base request
 	 */
 	@RpcMethod(method = "stopServer", description = "Stops the server.")
-	public void stopServer(RpcRequest request, RpcResponse response)
+	public void stopServer(RpcRequest request, RpcResponse response, Request baseRequest)
 	{
 		server.initiateShutdown();
 
