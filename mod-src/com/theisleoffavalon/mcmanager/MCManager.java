@@ -92,6 +92,11 @@ public class MCManager
 	private CommandManager commandManager;
 	
 	/**
+	 * The player manager.
+	 */
+	private PlayerManager playerManager;
+	
+	/**
 	 * Called when the mod is in the pre-initialization phase.
 	 * 
 	 * @param event - the event information
@@ -128,6 +133,7 @@ public class MCManager
 		serverMonitor = new ServerMonitor();
 		consoleMonitor = new ConsoleMonitor();
 		commandManager = new CommandManager();
+		playerManager = new PlayerManager();
 	}
 	
 	/**
@@ -144,6 +150,7 @@ public class MCManager
 		webServer.getRpcHandler().addHandler(serverMonitor);
 		webServer.getRpcHandler().addHandler(consoleMonitor);
 		webServer.getRpcHandler().addHandler(commandManager);
+		webServer.getRpcHandler().addHandler(playerManager);
 		
 		coreConfig.save();
 		
