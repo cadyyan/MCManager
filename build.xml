@@ -67,7 +67,6 @@
 
     <!-- Setup mcp and forge -->
     <target name="setup" depends="download-files" if="out-of-date">
-
         <delete dir="${forge.dir}" failonerror="false" />
 
         <unzip dest="${forge.dir}/.." src="${download.dir}/${forge.name}" />
@@ -86,7 +85,6 @@
     </target>
 
     <target name="compile" depends="initialize-version,setup">
-
         <delete dir="${classes.dir}" />
         <mkdir dir="${classes.dir}" />
 

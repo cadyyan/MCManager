@@ -60,7 +60,7 @@ public class PlayerManager
 		// Check if the user is already logged in.
 		if(users.containsValue(username))
 		{
-			response.setError(new Error(ErrorCode.INVALID_REQUEST, "You are already logged in.", null));
+			response.setResult(users.inverse().get(username));
 			return;
 		}
 		
