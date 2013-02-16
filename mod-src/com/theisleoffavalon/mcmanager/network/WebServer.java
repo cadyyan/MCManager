@@ -47,6 +47,11 @@ import com.theisleoffavalon.mcmanager.util.LogHelper;
 public class WebServer
 {
 	/**
+	 * The web server configuration category.
+	 */
+	public static String WEBSERVER_CONFIG_CATEGORY = "webserver";
+	
+	/**
 	 * The number of seconds to wait for requests before stopping the web server.
 	 */
 	private static final int STOP_WAIT_TIME = 2;
@@ -92,11 +97,11 @@ public class WebServer
 	public WebServer(Configuration config) throws IOException
 	{
 		// TODO: set this up to use HTTPS instead when requested
-		webServer = new Server(config.get("webserver", "port", 1716).getInt());
+		webServer = new Server(config.get(WEBSERVER_CONFIG_CATEGORY, "port", 1716).getInt());
 		webServer.setGracefulShutdown(STOP_WAIT_TIME);
 		webServer.setSessionIdManager(new HashSessionIdManager());
 		
-		int maxConnections = config.get("webserver", "max-sessions", 20).getInt();
+		int maxConnections = config.get(WEBSERVER_CONFIG_CATEGORY, "max-sessions", 20).getInt();
 		if(maxConnections < 2)
 		{
 			LogHelper.warning("The selected number of minimum connections allowed is too low. Using low default instead.");
