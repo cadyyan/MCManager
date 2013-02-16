@@ -1,8 +1,8 @@
 package com.theisleoffavalon.mcmanager;
 
-import java.util.List;
 import java.util.Map;
 
+import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ICommandSender;
@@ -15,6 +15,9 @@ import org.eclipse.jetty.server.Request;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import com.theisleoffavalon.mcmanager.commands.Command;
+import com.theisleoffavalon.mcmanager.commands.CommandHeal;
+import com.theisleoffavalon.mcmanager.commands.CommandKill;
 import com.theisleoffavalon.mcmanager.network.handler.jsonrpc.RpcMethod;
 import com.theisleoffavalon.mcmanager.network.handler.jsonrpc.RpcRequest;
 import com.theisleoffavalon.mcmanager.network.handler.jsonrpc.RpcResponse;
@@ -58,6 +61,26 @@ public class CommandManager implements ICommandSender
 	public CommandManager()
 	{
 		this.commandManager = MinecraftServer.getServer().getCommandManager();
+	}
+	
+	/**
+	 * Registers all commands to the server that are in the command package.
+	 */
+	public void registerCommands()
+	{
+		addCommand(new CommandKill());
+		addCommand(new CommandHeal());
+	}
+	
+	/**
+	 * Adds a command to the server.
+	 * 
+	 * @param command - the command
+	 */
+	private void addCommand(Command command)
+	{
+		CommandHandler handler = (CommandHandler)commandManager;
+		handler.registerCommand(command);
 	}
 	
 	/**

@@ -72,7 +72,7 @@ public class CommandKill extends Command
 		if(player == null)
 			throw new PlayerNotFoundException("Could not find a player " + username);
 		
-		player.attackEntityFrom(KillDamageSource.damage, Integer.MAX_VALUE);
+		player.attackEntityFrom(KillDamageSource.damage, 32767);
 		notifyAdmins(player, "Execting " + player.username);
 	}
 	

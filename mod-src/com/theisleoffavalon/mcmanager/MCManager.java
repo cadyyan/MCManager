@@ -149,6 +149,8 @@ public class MCManager
 		consoleMonitor = new ConsoleMonitor();
 		commandManager = new CommandManager();
 		playerManager = new PlayerManager();
+		
+		commandManager.registerCommands();
 	}
 	
 	/**
