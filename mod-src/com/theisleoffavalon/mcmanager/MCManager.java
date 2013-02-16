@@ -62,6 +62,11 @@ public class MCManager
 	public static MCManagerProxy proxy;
 	
 	/**
+	 * The server instance.
+	 */
+	private MinecraftServer server;
+	
+	/**
 	 * The mod config directory.
 	 */
 	private File configDir;
@@ -110,6 +115,8 @@ public class MCManager
 		// TODO: find a way to make this not work client side.
 		//if(proxy instanceof MCManagerClientProxy)
 		//	throw new RuntimeException("This is a server-side only mod.");
+		
+		server = MinecraftServer.getServer();
 		
 		configDir = new File(event.getSuggestedConfigurationFile().getParent() + "/MCManager");
 		if(!configDir.exists())
@@ -171,6 +178,16 @@ public class MCManager
 		consoleMonitor.stopLogging();
 		
 		LogHelper.info("MCManager stopped.");
+	}
+	
+	/**
+	 * Gets the server instance that is running this mod.
+	 * 
+	 * @return the server
+	 */
+	public MinecraftServer getServer()
+	{
+		return server;
 	}
 	
 	/**
