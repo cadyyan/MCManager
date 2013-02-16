@@ -17,6 +17,8 @@ public abstract class Command extends CommandBase
 	 */
 	protected String name;
 	
+	// TODO: add parameter types and names
+	
 	/**
 	 * Creates a new command with the given command name.
 	 * 
