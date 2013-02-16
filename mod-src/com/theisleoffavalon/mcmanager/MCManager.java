@@ -72,6 +72,11 @@ public class MCManager
 	private Configuration coreConfig;
 	
 	/**
+	 * The flag saying if the web server should be enabled.
+	 */
+	private boolean webServerEnabled;
+	
+	/**
 	 * The web server instance.
 	 */
 	private WebServer webServer;
@@ -129,7 +134,10 @@ public class MCManager
 	{
 		LogHelper.info("Initializing...");
 		
-		webServer = new WebServer(coreConfig);
+		webServerEnabled = coreConfig.get(WebServer.WEBSERVER_CONFIG_CATEGORY, "enable", true).getBoolean(true);
+		
+		if(webServerEnabled)
+			webServer = new WebServer(coreConfig);
 		serverMonitor = new ServerMonitor();
 		consoleMonitor = new ConsoleMonitor();
 		commandManager = new CommandManager();
@@ -146,11 +154,14 @@ public class MCManager
 	{
 		consoleMonitor.startLogging();
 		
-		webServer.startServer();
-		webServer.getRpcHandler().addHandler(serverMonitor);
-		webServer.getRpcHandler().addHandler(consoleMonitor);
-		webServer.getRpcHandler().addHandler(commandManager);
-		webServer.getRpcHandler().addHandler(playerManager);
+		if(webServerEnabled)
+		{
+			webServer.startServer();
+			webServer.getRpcHandler().addHandler(serverMonitor);
+			webServer.getRpcHandler().addHandler(consoleMonitor);
+			webServer.getRpcHandler().addHandler(commandManager);
+			webServer.getRpcHandler().addHandler(playerManager);
+		}
 		
 		coreConfig.save();
 		
@@ -167,7 +178,8 @@ public class MCManager
 	{
 		LogHelper.info("Stopping MCManager...");
 		
-		webServer.stopServer();
+		if(webServerEnabled)
+			webServer.stopServer();
 		consoleMonitor.stopLogging();
 		
 		LogHelper.info("MCManager stopped.");
