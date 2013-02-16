@@ -1,6 +1,7 @@
 package com.theisleoffavalon.mcmanager.commands;
 
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.entity.player.EntityPlayer;
 
 import com.theisleoffavalon.mcmanager.MCManager;
@@ -34,7 +35,11 @@ public class CommandHeal extends Command
 		EntityPlayer player = username == null ? getCommandSenderAsPlayer(sender) :
 												 MCManager.instance.getServer().getConfigurationManager().getPlayerForUsername(username);
 		
+		if(player == null)
+			throw new PlayerNotFoundException();
+		
 		player.heal(player.getMaxHealth() * 2);
+		player.getFoodStats().addStats(player.getMaxHealth() * 2, 20.0F);
 		notifyAdmins(sender, "Healing " + player.username);
 	}
 }
