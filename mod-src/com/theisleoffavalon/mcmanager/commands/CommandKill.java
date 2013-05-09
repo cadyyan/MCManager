@@ -2,6 +2,7 @@ package com.theisleoffavalon.mcmanager.commands;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 
@@ -42,9 +43,10 @@ public class CommandKill extends Command
 		}
 		
 		@Override
-		public String getDeathMessage(EntityPlayer player)
+		public String getDeathMessage(EntityLiving player)
 		{
-			return player.username + " was executed";
+		    
+			return player.getEntityName() + " was executed";
 		}
 	}
 	
@@ -76,9 +78,4 @@ public class CommandKill extends Command
 		notifyAdmins(player, "Execting " + player.username);
 	}
 	
-	@Override
-	public boolean isUsernameIndex(int index)
-	{
-		return index == 0;
-	}
 }
