@@ -3,8 +3,11 @@ package com.theisleoffavalon.mcmanager.commands;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumChatFormatting;
 
 import com.theisleoffavalon.mcmanager.MCManager;
 
@@ -43,10 +46,12 @@ public class CommandKill extends Command
 		}
 		
 		@Override
-		public String getDeathMessage(EntityLiving player)
+		public ChatMessageComponent getDeathMessage(EntityLivingBase player)
 		{
-		    
-			return player.getEntityName() + " was executed";
+		    ChatMessageComponent cmc = new ChatMessageComponent();
+		    cmc.addText(player.getEntityName() + " was executed");
+		    cmc.setColor(EnumChatFormatting.RED);
+			return cmc;
 		}
 	}
 	
