@@ -7,9 +7,11 @@ import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.StringTranslate;
 import net.minecraft.util.StringUtils;
+import net.minecraft.world.World;
 
 import org.eclipse.jetty.server.Request;
 import org.json.simple.JSONArray;
@@ -168,9 +170,9 @@ public class CommandManager implements ICommandSender
 	}
 
 	@Override
-	public void sendChatToPlayer(String var1)
+	public void sendChatToPlayer(ChatMessageComponent var1)
 	{
-		LogHelper.info(StringUtils.stripControlCodes(var1));
+		LogHelper.info(StringUtils.stripControlCodes(var1.toString()));
 	}
 
 	@Override
@@ -181,11 +183,11 @@ public class CommandManager implements ICommandSender
 					 // TODO: is.
 	}
 
-	@Override
-	public String translateString(String var1, Object... var2)
-	{
-		return StringTranslate.getInstance().translateKeyFormat(var1, var2);
-	}
+//	@Override
+//	public String translateString(String var1, Object... var2)
+//	{
+//		return StringTranslate.getInstance().translateKeyFormat(var1, var2);
+//	}
 
 	/**
 	 * Gets the position of the command sender.
@@ -196,5 +198,11 @@ public class CommandManager implements ICommandSender
 	public ChunkCoordinates getPlayerCoordinates()
 	{
 		return new ChunkCoordinates(0, 0, 0);
+	}
+
+	@Override
+	public World getEntityWorld() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
