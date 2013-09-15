@@ -28,16 +28,15 @@ import com.theisleoffavalon.mcmanager.proxy.MCManagerProxy;
 import com.theisleoffavalon.mcmanager.util.LogHelper;
 
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.PostInit;
-import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.Mod.ServerStopped;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStoppedEvent;
+
 
 /**
  * The main class for the Forge mod.
@@ -112,7 +111,7 @@ public class MCManager
 	 * @param event - the event information
 	 * @throws IOException thrown on one of the many IO errors
 	 */
-	@PreInit
+	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) throws IOException
 	{
 		LogHelper.info("Pre-initializing...");
@@ -136,12 +135,13 @@ public class MCManager
 	 * @param event - the event information
 	 * @throws IOException thrown when the web server can't start
 	 */
-	@Init
-	public void init(FMLInitializationEvent event) throws IOException
+	@EventHandler
+	public void load(FMLInitializationEvent event) throws IOException
 	{
 		LogHelper.info("Initializing...");
 		
 		webServerEnabled = coreConfig.get(WebServer.WEBSERVER_CONFIG_CATEGORY, "enable", true).getBoolean(true);
+
 		
 		if(webServerEnabled)
 			webServer = new WebServer(coreConfig);
@@ -158,7 +158,7 @@ public class MCManager
 	 * 
 	 * @param event - the event information
 	 */
-	@PostInit
+	@EventHandler
 	public void postInit(FMLPostInitializationEvent event)
 	{
 		consoleMonitor.startLogging();
@@ -182,7 +182,7 @@ public class MCManager
 	 * 
 	 * @param event - the event information
 	 */
-	@ServerStopped
+	@EventHandler
 	public void shutdown(FMLServerStoppedEvent event)
 	{
 		LogHelper.info("Stopping MCManager...");

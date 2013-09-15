@@ -38,8 +38,8 @@ public class CommandHeal extends Command
 		if(player == null)
 			throw new PlayerNotFoundException();
 		
-		int healthAmount = player.getMaxHealth() - player.getHealth();
-		int foodAmount = player.getMaxHealth() - player.getFoodStats().getFoodLevel();
+		float healthAmount = player.getMaxHealth() - player.getHealth();
+		int foodAmount = (int)player.getMaxHealth() - player.getFoodStats().getFoodLevel();
 		
 		player.heal(healthAmount);
 		player.getFoodStats().addStats(foodAmount, 20.0F);
