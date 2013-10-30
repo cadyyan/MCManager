@@ -1,2 +1,8 @@
-bin
+*.swp
+*.swo
+tag
 /bin
+/build
+/download
+*.class
+
