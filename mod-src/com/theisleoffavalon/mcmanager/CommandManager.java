@@ -1,20 +1,25 @@
 package com.theisleoffavalon.mcmanager;
 
-import java.util.List;
 import java.util.Map;
 
+import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.StringTranslate;
 import net.minecraft.util.StringUtils;
+import net.minecraft.world.World;
 
 import org.eclipse.jetty.server.Request;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import com.theisleoffavalon.mcmanager.commands.Command;
+import com.theisleoffavalon.mcmanager.commands.CommandHeal;
+import com.theisleoffavalon.mcmanager.commands.CommandKill;
 import com.theisleoffavalon.mcmanager.network.handler.jsonrpc.RpcMethod;
 import com.theisleoffavalon.mcmanager.network.handler.jsonrpc.RpcRequest;
 import com.theisleoffavalon.mcmanager.network.handler.jsonrpc.RpcResponse;
@@ -58,6 +63,26 @@ public class CommandManager implements ICommandSender
 	public CommandManager()
 	{
 		this.commandManager = MinecraftServer.getServer().getCommandManager();
+	}
+	
+	/**
+	 * Registers all commands to the server that are in the command package.
+	 */
+	public void registerCommands()
+	{
+		addCommand(new CommandKill());
+		addCommand(new CommandHeal());
+	}
+	
+	/**
+	 * Adds a command to the server.
+	 * 
+	 * @param command - the command
+	 */
+	private void addCommand(Command command)
+	{
+		CommandHandler handler = (CommandHandler)commandManager;
+		handler.registerCommand(command);
 	}
 	
 	/**
@@ -145,9 +170,9 @@ public class CommandManager implements ICommandSender
 	}
 
 	@Override
-	public void sendChatToPlayer(String var1)
+	public void sendChatToPlayer(ChatMessageComponent var1)
 	{
-		LogHelper.info(StringUtils.stripControlCodes(var1));
+		LogHelper.info(StringUtils.stripControlCodes(var1.toString()));
 	}
 
 	@Override
@@ -158,11 +183,11 @@ public class CommandManager implements ICommandSender
 					 // TODO: is.
 	}
 
-	@Override
-	public String translateString(String var1, Object... var2)
-	{
-		return StringTranslate.getInstance().translateKeyFormat(var1, var2);
-	}
+//	@Override
+//	public String translateString(String var1, Object... var2)
+//	{
+//		return StringTranslate.getInstance().translateKeyFormat(var1, var2);
+//	}
 
 	/**
 	 * Gets the position of the command sender.
@@ -173,5 +198,11 @@ public class CommandManager implements ICommandSender
 	public ChunkCoordinates getPlayerCoordinates()
 	{
 		return new ChunkCoordinates(0, 0, 0);
+	}
+
+	@Override
+	public World getEntityWorld() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

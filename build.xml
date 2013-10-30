@@ -1,169 +1,189 @@
 <project name="MCManager" default="main">
-    <property environment="env" />
-    <!-- Properties -->
+	<property environment="env" />
+	<!-- Properties -->
 
-    <property name="build.dir" value="build" />
-    <property name="src.dir" value="." />
-    <property name="lib.dir" value="./lib" />
+	<property name="build.dir" value="build" />
+	<property name="src.dir" value="." />
+	<property name="lib.dir" value="./lib" />
 
-    <property name="download.dir" value="download" />
+	<property name="download.dir" value="download" />
 
-    <property name="classes.dir" value="${build.dir}/classes" />
-    <property name="jar.dir" value="bin" />
+	<property name="classes.dir" value="${build.dir}/classes" />
+	<property name="jar.dir" value="bin" />
 
-    <property name="forge.dir" value="${build.dir}/forge" />
-    <property name="mcp.dir" value="${forge.dir}/mcp" />
+	<property name="forge.dir" value="${build.dir}/forge" />
+	<property name="mcp.dir" value="${forge.dir}/mcp" />
 
-    <property name="mcpsrc.dir" value="${mcp.dir}/src" />
+	<property name="mcpsrc.dir" value="${mcp.dir}/src" />
 
-    <property name="mc.version" value="1.4.7" />
-    <property name="forge.version" value="6.6.0.497" />
-    <property name="project.version" value="1.0.0" />
+	<property name="mc.version" value="1.6.4" />
+	<property name="forge.version" value="9.11.1.938" />
 
-    <property name="forge.name" value="minecraftforge-src-${mc.version}-${forge.version}.zip" />
+	<property name="forge.name" value="minecraftforge-src-${mc.version}-${forge.version}.zip" />
 
-    <available property="forge-exists" file="${download.dir}/${forge.name}" />
+	<available property="forge-exists" file="${download.dir}/${forge.name}" />
 
-    <condition property="out-of-date">
-        <not>
-            <and>
-                <available file="${download.dir}/${forge.name}" />
-                <available file="${mcpsrc.dir}" />
-            </and>
-        </not>
-    </condition>
+	<condition property="out-of-date">
+		<not>
+			<and>
+				<available file="${download.dir}/${forge.name}" />
+				<available file="${mcpsrc.dir}" />
+			</and>
+		</not>
+	</condition>
 
-    <mkdir dir="${download.dir}" />
+	<mkdir dir="${download.dir}" />
 
-    <!-- Targets -->
+	<!-- Targets -->
 
-    <!-- Clear build directory -->
-    <target name="clean">
-        <delete dir="${build.dir}" />
-    </target>
+	<!-- Set build number -->
+	<target name="version-provided" if="env.BUILD_NUMBER">
+		<property name="build.number" value="${env.BUILD_NUMBER}" />
+	</target>
 
-    <!-- Set full version -->
-    <target name="initialize-version" depends="version-provided,version-not-provided">
-        <property name="project.version.full" value="${project.version}.${build.number}" />
-    </target>
+	<!-- Git revision for version -->
+	<target name="git.revision">
+		<exec executable="git" dir="${src.dir}" outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
+			<arg value="describe" />
+			<arg value="--match &quot;[^(ci)]*&quot;" />
+			<arg value="--tags" />
+		</exec>
+		<loadresource property="git.clean.revision">
+			<propertyresource name="git.revision" />
+			<filterchain>
+				<tokenfilter>
+					<filetokenizer />
+					<replaceregex pattern="-[a-z0-9]+$" replace="" />
+					<replacestring from="-" to="." />
+				</tokenfilter>
+			</filterchain>
+		</loadresource>
+		<condition property="project.version" value="${git.clean.revision}" else="0.0.0.0">
+			<and>
+				<isset property="git.revision" />
+				<length string="${git.revision}" trim="yes" length="0" when="greater" />
+			</and>
+		</condition>
+		<condition property="project.complete.version" value="${git.revision}" else="0.0.0.0">
+			<and>
+				<isset property="git.revision" />
+				<length string="${git.revision}" trim="yes" length="0" when="greater" />
+			</and>
+		</condition>
+		<echo>Building MCManager version ${project.complete.version} (${project.version})</echo>
+	</target>
 
-    <!-- Set unknown build number -->
-    <target name="version-not-provided" unless="env.BUILD_NUMBER">
-        <property name="build.number" value="unknown" />
-    </target>
+	<!-- Clear build directory -->
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
 
-    <!-- Set build number from environment -->
-    <target name="version-provided" if="env.BUILD_NUMBER">
-        <property name="build.number" value="${env.BUILD_NUMBER}" />
-    </target>
+	<!-- Download necessary files -->
+	<target name="download-files" depends="download-forge" />
 
-    <!-- Download necessary files -->
-    <target name="download-files" depends="download-forge" />
+	<!-- Download forge (if it doesn't exist) -->
+	<target name="download-forge" unless="forge-exists">
+		<get src="http://files.minecraftforge.net/${forge.name}" dest="${download.dir}/${forge.name}" usetimestamp="True" />
+	</target>
 
-    <!-- Download forge (if it doesn't exist) -->
-    <target name="download-forge" unless="forge-exists">
-        <get src="http://files.minecraftforge.net/${forge.name}" dest="${download.dir}/${forge.name}" usetimestamp="True" />
-    </target>
+	<!-- Setup mcp and forge -->
+	<target name="setup" depends="download-files" if="out-of-date">
+		<unzip dest="${forge.dir}/.." src="${download.dir}/${forge.name}" />
 
-    <!-- Setup mcp and forge -->
-    <target name="setup" depends="download-files" if="out-of-date">
-        <delete dir="${forge.dir}" failonerror="false" />
+		<!-- Fix executable permissions -->
+		<chmod dir="${forge.dir}" perm="ugo+rx" includes="**.sh" />
 
-        <unzip dest="${forge.dir}/.." src="${download.dir}/${forge.name}" />
+		<!-- Install forge -->
+		<exec dir="${forge.dir}" executable="cmd" osfamily="windows">
+			<arg line="/c install.cmd" />
+		</exec>
 
-        <!-- Fix executable permissions -->
-        <chmod dir="${forge.dir}" perm="ugo+rx" includes="**.sh" />
+		<exec dir="${forge.dir}" executable="sh" osfamily="unix">
+			<arg value="install.sh" />
+		</exec>
+	</target>
 
-        <!-- Install forge -->
-        <exec dir="${forge.dir}" executable="cmd" osfamily="windows">
-            <arg line="/c install.cmd" />
-        </exec>
+	<target name="compile" depends="git.revision,setup">
+		<delete dir="${classes.dir}" />
+		<mkdir dir="${classes.dir}" />
 
-        <exec dir="${forge.dir}" executable="sh" osfamily="unix">
-            <arg value="install.sh" />
-        </exec>
-    </target>
+		<!-- Copy sources -->
+		<copy todir="${mcpsrc.dir}/minecraft">
+			<fileset dir="${src.dir}/mod-src" />
+			<filterset>
+				<filter token="VERSION" value="${project.complete.version}" />
+				<filter token="BUILD_NUMBER" value="${build.number}" />
+			</filterset>
+		</copy>
 
-    <target name="compile" depends="initialize-version,setup">
-        <delete dir="${classes.dir}" />
-        <mkdir dir="${classes.dir}" />
+		<copy todir="${mcp.dir}/lib">
+			<fileset dir="${lib.dir}">
+				<include name="jetty-all-8.1.8.v20121106.jar" />
+				<include name="json-simple-1.1.1.jar" />
+				<include name="servlet-api-3.0.jar" />
+				<include name="snakeyaml-1.11.jar" />
+			</fileset>
+		</copy>
 
-        <!-- Copy sources -->
-        <copy todir="${mcpsrc.dir}/minecraft">
-            <fileset dir="${src.dir}/mod-src" />
-            <filterset>
-                <filter token="VERSION" value="${project.version.full}" />
-                <filter token="BUILD_NUMBER" value="${build.number}" />
-            </filterset>
-        </copy>
-        
-        <copy todir="${mcp.dir}/lib">
-            <fileset dir="${lib.dir}">
-                <include name="jetty-all-8.1.8.v20121106.jar" />
-                <include name="json-simple-1.1.1.jar" />
-                <include name="servlet-api-3.0.jar" />
-                <include name="snakeyaml-1.11.jar" />
-            </fileset>
-        </copy>
+		<!-- Recompile -->
+		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
+			<arg line="/c recompile.bat" />
+		</exec>
+		<exec dir="${mcp.dir}" executable="sh" osfamily="unix">
+			<arg value="recompile.sh" />
+		</exec>
 
-        <!-- Recompile -->
-        <exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
-            <arg line="/c recompile.bat" />
-        </exec>
-        <exec dir="${mcp.dir}" executable="sh" osfamily="unix">
-            <arg value="recompile.sh" />
-        </exec>
+		<!-- Reobfuscate -->
+		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
+			<arg line="/c reobfuscate.bat" />
+		</exec>
+		<exec dir="${mcp.dir}" executable="sh" osfamily="unix">
+			<arg value="reobfuscate.sh" />
+		</exec>
 
-        <!-- Reobfuscate -->
-        <exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
-            <arg line="/c reobfuscate.bat" />
-        </exec>
-        <exec dir="${mcp.dir}" executable="sh" osfamily="unix">
-            <arg value="reobfuscate.sh" />
-        </exec>
-
-        <!-- Copy classes -->
-        <unzip src="${lib.dir}/jetty-all-8.1.8.v20121106.jar" dest="${classes.dir}">
+		<!-- Copy classes -->
+		<unzip src="${lib.dir}/jetty-all-8.1.8.v20121106.jar" dest="${classes.dir}">
 			<patternset>
 				<include name="org/**/*" />
 			</patternset>
 		</unzip>
-        <unzip src="${lib.dir}/json-simple-1.1.1.jar" dest="${classes.dir}">
+		<unzip src="${lib.dir}/json-simple-1.1.1.jar" dest="${classes.dir}">
 			<patternset>
 				<include name="**/*.class" />
 			</patternset>
 		</unzip>
-        <unzip src="${lib.dir}/servlet-api-3.0.jar" dest="${classes.dir}">
+		<unzip src="${lib.dir}/servlet-api-3.0.jar" dest="${classes.dir}">
 			<patternset>
 				<include name="javax/**/*" />
 			</patternset>
 		</unzip>
-        <unzip src="${lib.dir}/snakeyaml-1.11.jar" dest="${classes.dir}">
+		<unzip src="${lib.dir}/snakeyaml-1.11.jar" dest="${classes.dir}">
 			<patternset>
 				<include name="**/*.class" />
 			</patternset>
 		</unzip>
-        
-        <copy todir="${classes.dir}">
-            <fileset dir="${mcp.dir}/reobf/minecraft" />
-        </copy>
-		
+
+		<copy todir="${classes.dir}">
+			<fileset dir="${mcp.dir}/reobf/minecraft" />
+		</copy>
+
 		<!-- Copy web resources -->
 		<copy todir="${classes.dir}">
 			<fileset dir="web-src" />
 		</copy>
 
-        <!-- Reset src dir to post-forge-install state -->
-        <delete dir="${mcpsrc.dir}/minecraft/com" />
-    </target>
+		<!-- Reset src dir to post-forge-install state -->
+		<delete dir="${mcpsrc.dir}/minecraft/com" />
+	</target>
 
-    <!-- Package the compiled files -->
-    <target name="package" depends="compile">
-        <delete dir="${jar.dir}" />
-        <mkdir dir="${jar.dir}" />
-        <jar destfile="${jar.dir}/${ant.project.name}-${mc.version}-${project.version.full}.jar" basedir="${classes.dir}" />
-    </target>
+	<!-- Package the compiled files -->
+	<target name="package" depends="compile">
+		<delete dir="${jar.dir}" />
+		<mkdir dir="${jar.dir}" />
+		<jar destfile="${jar.dir}/${ant.project.name}-${mc.version}-${project.complete.version}.jar" basedir="${classes.dir}" />
+	</target>
 
-    <!-- Default target to run -->
-    <target name="main" depends="package" />
+	<!-- Default target to run -->
+	<target name="main" depends="package" />
 </project>
+
