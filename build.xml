@@ -120,7 +120,7 @@
 
 		<copy todir="${mcp.dir}/lib">
 			<fileset dir="${lib.dir}">
-				<include name="jetty-all-8.1.8.v20121106.jar" />
+				<include name="jetty-all-9.0.6.v20130930.jar" />
 				<include name="json-simple-1.1.1.jar" />
 				<include name="servlet-api-3.0.jar" />
 				<include name="snakeyaml-1.11.jar" />
