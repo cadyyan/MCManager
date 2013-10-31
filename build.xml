@@ -11,7 +11,9 @@
 	<property name="classes.dir" value="${build.dir}/classes" />
 	<property name="jar.dir" value="bin" />
 
-	<property name="forge.dir" value="${build.dir}/forge" />
+	<condition property="forge.dir" value="${env.FORGE_DIR}" else="${build.dir}/forge">
+		<isset property="env.FORGE_DIR" />
+	</condition>
 	<property name="mcp.dir" value="${forge.dir}/mcp" />
 
 	<property name="mcpsrc.dir" value="${mcp.dir}/src" />
@@ -26,6 +28,7 @@
 	<condition property="out-of-date">
 		<not>
 			<and>
+				<not><isset property="env.FORGE_DIR" /></not>
 				<available file="${download.dir}/${forge.name}" />
 				<available file="${mcpsrc.dir}" />
 			</and>
@@ -84,12 +87,11 @@
 	<!-- Download forge (if it doesn't exist) -->
 	<target name="download-forge" unless="forge-exists">
 		<get src="http://files.minecraftforge.net/${forge.name}" dest="${download.dir}/${forge.name}" usetimestamp="True" />
+		<unzip dest="${forge.dir}/.." src="${download.dir}/${forge.name}" />
 	</target>
 
 	<!-- Setup mcp and forge -->
 	<target name="setup" depends="download-files" if="out-of-date">
-		<unzip dest="${forge.dir}/.." src="${download.dir}/${forge.name}" />
-
 		<!-- Fix executable permissions -->
 		<chmod dir="${forge.dir}" perm="ugo+rx" includes="**.sh" />
 
