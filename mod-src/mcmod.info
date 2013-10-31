@@ -1,20 +1,20 @@
 [
-{
-    "modid": "MCManager",
-    "name": "MCManager",
-    "description": "Manager your Forge Server",
-    "version": "2.0.0",
-    "url": "http://github.com/cadyyan/MCManager",
-    "updateUrl": "",
-    "authorList": [
-        "cadyyan, sogtwinster, sgthotshot"
-    ],
-    "credits": "cadyyan & sogtwinster & sgthotshot",
-    "logoFile": "",
-    "screenshots": [
-    ],
-    "parent": "",
-    "dependencies": [
-    ]
-}
+	{
+		"modid": "MCManager",
+		"name": "MCManager",
+		"description": "Manager your Forge Server",
+		"version": "0.0.0.0",
+		"url": "http://github.com/cadyyan/MCManager",
+		"updateUrl": "",
+		"authorList": [
+			"cadyyan, sogtwinster, sgthotshot"
+		],
+		"credits": "cadyyan, sogtwinster, sgthotshot",
+		"logoFile": "",
+		"screenshots": [
+		],
+		"parent": "",
+		"dependencies": [
+		]
+	}
 ]
