@@ -144,7 +144,7 @@
 		</exec>
 
 		<!-- Copy classes -->
-		<unzip src="${lib.dir}/jetty-all-8.1.8.v20121106.jar" dest="${classes.dir}">
+		<unzip src="${lib.dir}/jetty-all-9.0.6.v20130930.jar" dest="${classes.dir}">
 			<patternset>
 				<include name="org/**/*" />
 			</patternset>
