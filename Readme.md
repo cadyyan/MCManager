@@ -1,8 +1,10 @@
-Setup:
-1) Pull the latest Forge from https://github.com/MinecraftForge/MinecraftForge.git
-2) Decompile Minecraft by running either setup.bat or setup.sh
-3) Copy the MCManager project into the eclipse directory of Forge
-4) Open Eclipse with the Forge eclipse directory as the workspace (there should be two projects there already)
-5) Add the MCManager project
-6) Add the MCManager class file to the Forge project
-7) You should be able to run the client and server
+MCManager is a Bukkit inspired Forge mod for managing a server. The goal is to provide server admins with the tools to run their server without the extra hassle. The mod uses a web server to provide a web interface for server management as well as in games commands and utilities.
+
+Installation:
+	1) Install Forge
+	2) Add jar to mods folder
+	3) Run server
+
+Configuration:
+	TODO:
+
