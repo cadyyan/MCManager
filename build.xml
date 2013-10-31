@@ -2,6 +2,7 @@
 	<property environment="env" />
 	<!-- Properties -->
 
+	<property name="bin.dir" value="bin" />
 	<property name="build.dir" value="build" />
 	<property name="src.dir" value="." />
 	<property name="lib.dir" value="./lib" />
@@ -34,8 +35,6 @@
 			</and>
 		</not>
 	</condition>
-
-	<mkdir dir="${download.dir}" />
 
 	<!-- Targets -->
 
@@ -78,14 +77,15 @@
 
 	<!-- Clear build directory -->
 	<target name="clean">
+		<delete dir="${bin.dir}" />
 		<delete dir="${build.dir}" />
+		<delete dir="${download.dir}" />
 	</target>
 
 	<!-- Download necessary files -->
-	<target name="download-files" depends="download-forge" />
+	<target name="download-files">
+		<mkdir dir="${download.dir}" />
 
-	<!-- Download forge (if it doesn't exist) -->
-	<target name="download-forge" unless="forge-exists">
 		<get src="http://files.minecraftforge.net/${forge.name}" dest="${download.dir}/${forge.name}" usetimestamp="True" />
 		<unzip dest="${forge.dir}/.." src="${download.dir}/${forge.name}" />
 	</target>
