@@ -24,13 +24,10 @@
 
 	<property name="forge.name" value="minecraftforge-src-${mc.version}-${forge.version}.zip" />
 
-	<available property="forge-exists" file="${download.dir}/${forge.name}" />
-
 	<condition property="out-of-date">
 		<not>
 			<and>
-				<not><isset property="env.FORGE_DIR" /></not>
-				<available file="${download.dir}/${forge.name}" />
+				<available file="${forge.dir}" />
 				<available file="${mcpsrc.dir}" />
 			</and>
 		</not>
@@ -83,7 +80,7 @@
 	</target>
 
 	<!-- Download necessary files -->
-	<target name="download-files">
+	<target name="download-files" if="out-of-date">
 		<mkdir dir="${download.dir}" />
 
 		<get src="http://files.minecraftforge.net/${forge.name}" dest="${download.dir}/${forge.name}" usetimestamp="True" />
