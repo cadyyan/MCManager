@@ -7,7 +7,7 @@ package com.theisleoffavalon.mcmanager.proxy;
  * so that the methods don't have to be implemented on proxies that don't actually
  * implement that functionality. For instance the server doesn't need to do anything
  * on a render call.
- * 
+ *
  * @author Cadyyan
  *
  */

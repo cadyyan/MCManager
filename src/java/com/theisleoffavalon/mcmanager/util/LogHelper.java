@@ -9,9 +9,9 @@ import cpw.mods.fml.common.FMLLog;
 
 /**
  * A utility class for handling global logging.
- * 
+ *
  * @author Cadyyan
- * 
+ *
  */
 public class LogHelper
 {
@@ -26,9 +26,8 @@ public class LogHelper
 
 	/**
 	 * Writes a debug message to the log.
-	 * 
-	 * @param message
-	 *            - the message
+	 *
+	 * @param message - the message
 	 */
 	public static void debug(String message)
 	{
@@ -37,9 +36,8 @@ public class LogHelper
 
 	/**
 	 * Writes an info message to the log.
-	 * 
-	 * @param message
-	 *            - the message
+	 *
+	 * @param message - the message
 	 */
 	public static void info(String message)
 	{
@@ -48,9 +46,8 @@ public class LogHelper
 
 	/**
 	 * Writes a warning message to the log.
-	 * 
-	 * @param message
-	 *            - the message
+	 *
+	 * @param message - the message
 	 */
 	public static void warning(String message)
 	{
@@ -59,9 +56,8 @@ public class LogHelper
 
 	/**
 	 * Writes an error message to the log.
-	 * 
-	 * @param message
-	 *            - the message
+	 *
+	 * @param message - the message
 	 */
 	public static void error(String message)
 	{
