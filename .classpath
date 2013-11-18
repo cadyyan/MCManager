@@ -5,9 +5,9 @@
 	<classpathentry kind="src" path="web-src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry exported="true" kind="lib" path="lib/jetty-all-8.1.8.v20121106.jar" sourcepath="lib/jetty-all-8.1.8.v20121106-sources.jar">
+	<classpathentry exported="true" kind="lib" path="lib/jetty-all-9.0.6.v20130930.jar" sourcepath="lib/jetty-all-9.0.6.v20130930-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/MCManager/lib/jetty-all-8.1.8.v20121106-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:platform:/resource/MCManager/lib/jetty-all-9.0.6.v20130930-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/servlet-api-3.0.jar">
@@ -21,7 +21,7 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/MCManager/lib/snakeyaml-1.11-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="E:/Top Secret/Minecraft Mods/minecraftforge-src-1.6.2-9.10.1.858/forge/mcp/jars/libraries/com/google/guava/guava/14.0/guava-14.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Minecraft/jars/libraries/com/google/guava/guava/14.0/guava-14.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Minecraft"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

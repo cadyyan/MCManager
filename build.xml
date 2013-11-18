@@ -79,6 +79,11 @@
 		<delete dir="${download.dir}" />
 	</target>
 
+	<!-- Clear mod stuff from Forge (useful for shared Forge environments). -->
+	<target name="clean-forge">
+		<delete dir="${mcp.src}/minecraft/com/theisleoffavalon" />
+	</target>
+
 	<!-- Download necessary files -->
 	<target name="download-files" if="out-of-date">
 		<mkdir dir="${download.dir}" />
