@@ -5,7 +5,6 @@
 	<property name="bin.dir" value="bin" />
 	<property name="build.dir" value="build" />
 	<property name="src.dir" value="." />
-	<property name="lib.dir" value="./lib" />
 
 	<property name="download.dir" value="download" />
 
@@ -120,15 +119,6 @@
 			</filterset>
 		</copy>
 
-		<copy todir="${mcp.dir}/lib">
-			<fileset dir="${lib.dir}">
-				<include name="jetty-all-9.0.6.v20130930.jar" />
-				<include name="json-simple-1.1.1.jar" />
-				<include name="servlet-api-3.0.jar" />
-				<include name="snakeyaml-1.11.jar" />
-			</fileset>
-		</copy>
-
 		<!-- Recompile -->
 		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
 			<arg line="/c recompile.bat" />
@@ -144,28 +134,6 @@
 		<exec dir="${mcp.dir}" executable="sh" osfamily="unix">
 			<arg value="reobfuscate.sh" />
 		</exec>
-
-		<!-- Copy classes -->
-		<unzip src="${lib.dir}/jetty-all-9.0.6.v20130930.jar" dest="${classes.dir}">
-			<patternset>
-				<include name="org/**/*" />
-			</patternset>
-		</unzip>
-		<unzip src="${lib.dir}/json-simple-1.1.1.jar" dest="${classes.dir}">
-			<patternset>
-				<include name="**/*.class" />
-			</patternset>
-		</unzip>
-		<unzip src="${lib.dir}/servlet-api-3.0.jar" dest="${classes.dir}">
-			<patternset>
-				<include name="javax/**/*" />
-			</patternset>
-		</unzip>
-		<unzip src="${lib.dir}/snakeyaml-1.11.jar" dest="${classes.dir}">
-			<patternset>
-				<include name="**/*.class" />
-			</patternset>
-		</unzip>
 
 		<copy todir="${classes.dir}">
 			<fileset dir="${mcp.dir}/reobf/minecraft" />
