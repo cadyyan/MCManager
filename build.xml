@@ -112,7 +112,7 @@
 
 		<!-- Copy sources -->
 		<copy todir="${mcpsrc.dir}/minecraft">
-			<fileset dir="${src.dir}/mod-src" />
+			<fileset dir="${src.dir}/src/java" />
 			<filterset>
 				<filter token="VERSION" value="${project.complete.version}" />
 				<filter token="BUILD_NUMBER" value="${build.number}" />
