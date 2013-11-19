@@ -139,11 +139,6 @@
 			<fileset dir="${mcp.dir}/reobf/minecraft" />
 		</copy>
 
-		<!-- Copy web resources -->
-		<copy todir="${classes.dir}">
-			<fileset dir="web-src" />
-		</copy>
-
 		<!-- Reset src dir to post-forge-install state -->
 		<delete dir="${mcpsrc.dir}/minecraft/com" />
 	</target>
