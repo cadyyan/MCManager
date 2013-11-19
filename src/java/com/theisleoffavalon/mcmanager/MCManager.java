@@ -14,6 +14,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.Mod.ServerStopped;
+import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -27,13 +28,16 @@ import cpw.mods.fml.common.event.FMLServerStoppedEvent;
  *
  */
 @Mod(modid = ModReference.ID, name = ModReference.NAME, version = ModReference.VERSION)
+@NetworkMod(channels = {},
+			clientSideRequired = false, serverSideRequired = true,
+			packetHandler = PacketHandler.class)
 public class MCManager
 {
 	/**
 	 * The mod instance. This is required by Forge. Plus it just makes getting mod resources easier. This is assigned by Forge
 	 * at runtime.
 	 */
-	@Instance
+	@Instance("MCManager")
 	public static MCManager instance;
 
 	/**
@@ -41,11 +45,6 @@ public class MCManager
 	 */
 	@SidedProxy(clientSide = ModReference.CLIENT_PROXY, serverSide = ModReference.SERVER_PROXY)
 	public static MCManagerProxy proxy;
-
-	/**
-	 * The server instance.
-	 */
-	private MinecraftServer server;
 
 	/**
 	 * The mod config directory.
@@ -68,13 +67,25 @@ public class MCManager
 	{
 		LogHelper.info("Pre-initializing...");
 
-		server = MinecraftServer.getServer();
-
-		configDir = new File(event.getSuggestedConfigurationFile().getParent() + "/MCManager");
+		this.configDir = new File(event.getSuggestedConfigurationFile().getParent(), "MCManager");
 		if(!configDir.exists())
 			configDir.mkdir();
 
-		coreConfig = new Configuration(new File(configDir, "MCManager.cfg"));
+		this.coreConfig = new Configuration(new File(configDir, "MCManager.cfg"));
+
+		try
+		{
+			coreConfig.load();
+		}
+		catch (Exception e)
+		{
+			LogHelper.severe(e, "There was a problem when trying to load the configuration.");
+		}
+		finally
+		{
+			if (coreConfig.hasChanged())
+				coreConfig.save();
+		}
 	}
 
 	/**
@@ -97,32 +108,7 @@ public class MCManager
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event)
 	{
-		coreConfig.save();
-
 		LogHelper.info("Finished initializing!");
-	}
-
-	/**
-	 * Called when the server is stopped.
-	 *
-	 * @param event - the event information
-	 */
-	@EventHandler
-	public void shutdown(FMLServerStoppedEvent event)
-	{
-		LogHelper.info("Stopping MCManager...");
-
-		LogHelper.info("MCManager stopped.");
-	}
-
-	/**
-	 * Gets the server instance that is running this mod.
-	 *
-	 * @return the server
-	 */
-	public MinecraftServer getServer()
-	{
-		return server;
 	}
 
 	/**
