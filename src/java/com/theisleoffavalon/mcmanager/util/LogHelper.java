@@ -59,7 +59,7 @@ public class LogHelper
 	 *
 	 * @param message - the message
 	 */
-	public static void error(String message)
+	public static void severe(String message)
 	{
 		log.severe(message);
 	}
@@ -70,4 +70,4 @@ public class LogHelper
 	private LogHelper()
 	{
 	}
-}
+
