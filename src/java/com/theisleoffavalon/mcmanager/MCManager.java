@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.Configuration;
 
+import com.theisleoffavalon.mcmanager.network.PacketHandler;
 import com.theisleoffavalon.mcmanager.proxy.MCManagerProxy;
 import com.theisleoffavalon.mcmanager.util.LogHelper;
 
