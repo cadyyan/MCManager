@@ -13,7 +13,6 @@ import com.theisleoffavalon.mcmanager.util.LogHelper;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.ServerStopped;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -79,7 +78,7 @@ public class MCManager
 		}
 		catch (Exception e)
 		{
-			LogHelper.severe(e, "There was a problem when trying to load the configuration.");
+			LogHelper.severe("There was a problem when trying to load the configuration.");
 		}
 		finally
 		{

@@ -1,8 +1,9 @@
 *.swp
 *.swo
-tag
+*.class
+tags
 /bin
 /build
+/eclipse
 /download
-*.class
-
+/.gradle

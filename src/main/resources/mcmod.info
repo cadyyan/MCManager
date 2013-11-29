@@ -1,0 +1,16 @@
+[
+    {
+        "modid": "mcmanager",
+        "name": "MCManager",
+        "description": "Manage your Minecraft server.",
+        "version": "${version}",
+        "mcversion": "${mcversion}",
+        "url": "https://github.com/cadyyan/MCManager",
+        "updateUrl": "",
+        "authors": ["cadyyan", "sgthotshot", "sogtwinster"],
+        "credits": "",
+        "logoFile": "",
+        "screenshots": [],
+        "dependencies": []
+    }
+]
