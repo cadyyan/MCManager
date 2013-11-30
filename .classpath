@@ -4,7 +4,6 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="lib" path="build/tmp/deobfBinJar/obfed.jar"/>
 	<classpathentry kind="lib" path="build/unpacked/binaries.jar"/>
-	<classpathentry kind="lib" path="C:\Users\James\.gradle\caches\modules-2\files-2.1\com.google.guava\guava\14.0.1\69e12f4c6aeac392555f1ea86fab82b5e5e31ad4/guava-14.0.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
